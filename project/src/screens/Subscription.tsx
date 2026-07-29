@@ -17,14 +17,15 @@ const PLANS_DATA = [
     benefit: 'EARLY ACCESS TO NEW TELUGU PREMIERES',
     description: [
       '4K • Dolby Atmos • Ads-Free',
-      'Telugu & Tamil Movies & Web series',
+      'Telugu & Tamil Movies & Web',
+      'series',
       '• 1 Year'
     ],
     period: 'YEAR',
     price: 999,
     originalPrice: 1499,
     cardBg: 'bg-gradient-to-b from-[#141008] via-[#090806] to-[#120e06]',
-    borderColor: 'border-[#a1761f]/60 hover:border-[#a1761f]',
+    borderColor: 'border-[#cca238]/60 hover:border-[#cca238]',
     stubBg: 'bg-[#cca238]',
     stubText: 'text-black',
     badgeBg: 'bg-[#cca238] text-black',
@@ -49,7 +50,7 @@ const PLANS_DATA = [
     price: 699,
     originalPrice: 1299,
     cardBg: 'bg-gradient-to-b from-[#06120b] via-[#030905] to-[#06120b]',
-    borderColor: 'border-[#155f30]/60 hover:border-[#155f30]',
+    borderColor: 'border-[#17793d]/60 hover:border-[#17793d]',
     stubBg: 'bg-[#17793d]',
     stubText: 'text-white',
     badgeBg: 'bg-[#17793d] text-white',
@@ -74,10 +75,10 @@ const PLANS_DATA = [
     price: 199,
     originalPrice: 299,
     cardBg: 'bg-gradient-to-b from-[#060b17] via-[#030509] to-[#060b17]',
-    borderColor: 'border-[#1e40af]/60 hover:border-[#1e40af]',
+    borderColor: 'border-[#1d4ed8]/60 hover:border-[#1d4ed8]',
     stubBg: 'bg-[#1d4ed8]',
     stubText: 'text-white',
-    badgeBg: 'bg-[#1d4ed8] text-white',
+    badgeBg: 'bg-[#0f172a] border border-[#cca238]/40 text-[#cca238]',
     taglineBg: 'bg-white/5 border border-white/10 text-white/80',
     benefitColor: 'text-[#3B82F6]',
     btnBg: 'bg-[#1d4ed8] text-white hover:bg-[#173fa5]',
@@ -99,7 +100,7 @@ const PLANS_DATA = [
     price: 99,
     originalPrice: 149,
     cardBg: 'bg-gradient-to-b from-[#0f0617] via-[#070309] to-[#0f0617]',
-    borderColor: 'border-[#5b21b6]/60 hover:border-[#5b21b6]',
+    borderColor: 'border-[#6d28d9]/60 hover:border-[#6d28d9]',
     stubBg: 'bg-[#6d28d9]',
     stubText: 'text-white',
     badgeBg: 'bg-[#6d28d9] text-white',
@@ -121,7 +122,7 @@ const ANNUAL_WIDE_PLAN = {
   price: 499,
   originalPrice: 699,
   cardBg: 'bg-gradient-to-b from-[#170608] via-[#0b0304] to-[#170608]',
-  borderColor: 'border-[#991b1b]/60 hover:border-[#991b1b]',
+  borderColor: 'border-[#b91c1c]/60 hover:border-[#b91c1c]',
   stubBg: 'bg-[#b91c1c]',
   stubText: 'text-white',
   badgeBg: 'bg-[#b91c1c] text-white',
@@ -224,16 +225,23 @@ export default function Subscription() {
               key={p.id}
               className={`relative ${p.cardBg} border ${p.borderColor} transition-all duration-300 rounded-2xl h-[520px] overflow-hidden row-shadow flex`}
             >
-              {/* Inner Circular Cutout Notch - Top Part (aligned at 30% mark of the vertical separation line) */}
-              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full right-[26px] top-[30%] -translate-y-1/2 z-20 pointer-events-none" />
-              {/* Inner Circular Cutout Notch - Bottom Part (aligned at 70% mark of the vertical separation line) */}
-              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full right-[26px] bottom-[30%] translate-y-1/2 z-20 pointer-events-none" />
+              {/* Solid divider line separating dark content area (left) and solid colored ticket stub (right) */}
+              <div className="absolute right-9 top-0 bottom-0 border-r border-white/10 z-10 pointer-events-none" />
+
+              {/* Notch Cutout 1: Outer Left Border Cutout */}
+              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full -left-2.5 top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
               
-              {/* Vertical Dashed Perforation Line - connecting top cutout to bottom cutout */}
-              <div className="absolute right-[36px] top-[30%] bottom-[30%] border-r border-dashed border-white/20 pointer-events-none z-20" />
+              {/* Notch Cutout 2: Divider Line Cutout */}
+              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full right-[26px] top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
+              
+              {/* Notch Cutout 3: Outer Right Border Cutout (cuts into colored stub right border) */}
+              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full -right-2.5 top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
+              
+              {/* Horizontal Dashed Perforation Line connecting all three circular notches */}
+              <div className="absolute left-0 right-0 top-[340px] border-t border-dashed border-white/15 pointer-events-none z-20" />
               
               {/* Right Solid Colored Ticket Stub Accent Strip */}
-              <div className={`absolute right-0 top-0 bottom-0 w-9 ${p.stubBg} flex flex-col items-center justify-between py-6 select-none z-10 border-l border-black/20 rounded-r-2xl`}>
+              <div className={`absolute right-0 top-0 bottom-0 w-9 ${p.stubBg} flex flex-col items-center justify-between py-6 select-none z-10 rounded-r-2xl`}>
                 {/* Barcode top */}
                 <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30`}>
                   <div className="w-5 h-[1px] bg-current" />
@@ -241,8 +249,8 @@ export default function Subscription() {
                   <div className="w-5 h-[1px] bg-current" />
                   <div className="w-5 h-[2px] bg-current" />
                 </div>
-                {/* Admit Text */}
-                <span className={`text-[8.5px] font-black tracking-[0.25em] ${p.stubText} uppercase whitespace-nowrap rotate-90 my-auto`}>
+                {/* Admit Text (Rotated counter-clockwise so A is at the bottom, E is at the top) */}
+                <span className={`text-[8.5px] font-black tracking-[0.25em] ${p.stubText} uppercase whitespace-nowrap -rotate-90 my-auto`}>
                   ADMIT ONE
                 </span>
                 {/* Barcode bottom */}
@@ -254,64 +262,69 @@ export default function Subscription() {
                 </div>
               </div>
 
-              {/* Left Main Contents Area (occupies 100% height, width leaves space for the right vertical strip) */}
+              {/* Left Main Contents Area (occupies width minus the right ticket strip) */}
               <div className="w-[calc(100%-36px)] h-full p-5 pr-4 flex flex-col justify-between">
-                <div>
-                  {/* Top Badge */}
-                  <div className="h-6 flex items-center mb-3">
-                    {p.badge && (
-                      <span className={`px-2.5 py-0.5 rounded text-[8px] font-black tracking-wider uppercase ${p.badgeBg}`}>
-                        {p.badge}
-                      </span>
-                    )}
-                  </div>
+                {/* Top contents container (ends above horizontal perforation) */}
+                <div className="h-[320px] flex flex-col justify-between">
+                  <div>
+                    {/* Top Badge */}
+                    <div className="h-6 flex items-center mb-3">
+                      {p.badge && (
+                        <span className={`px-2.5 py-0.5 rounded text-[8px] font-black tracking-wider uppercase ${p.badgeBg}`}>
+                          {p.badge}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Plan Name & Ad Free bubble */}
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    {p.subBadge && (
-                      <span className="px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {p.subBadge}
-                      </span>
-                    )}
-                    <h3 className="text-xl font-bold tracking-tight text-white">{p.name}</h3>
-                  </div>
+                    {/* Plan Name & Ad Free bubble */}
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      {p.subBadge && (
+                        <span className="px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {p.subBadge}
+                        </span>
+                      )}
+                      <h3 className="text-xl font-bold tracking-tight text-white">{p.name}</h3>
+                    </div>
 
-                  {/* Subtitle taglines capsules */}
-                  <div className="inline-block bg-white/5 border border-white/10 rounded-full px-2.5 py-0.5 text-[8.5px] font-bold text-white/50 tracking-wider uppercase mb-4 max-w-full truncate">
-                    {p.tagline}
-                  </div>
+                    {/* Subtitle taglines capsules */}
+                    <div className="inline-block bg-white/5 border border-white/10 rounded-full px-2.5 py-0.5 text-[8.5px] font-bold text-white/50 tracking-wider uppercase mb-4 max-w-full truncate">
+                      {p.tagline}
+                    </div>
 
-                  {/* Benefit text */}
-                  <div className={`text-[10px] font-bold tracking-wide uppercase leading-relaxed ${p.benefitColor} mb-3.5`}>
-                    {p.benefit}
-                  </div>
+                    {/* Benefit text */}
+                    <div className={`text-[10px] font-bold tracking-wide uppercase leading-relaxed ${p.benefitColor} mb-3`}>
+                      {p.benefit}
+                    </div>
 
-                  {/* Description details list */}
-                  <div className="text-[10.5px] text-white/60 leading-normal space-y-0.5">
-                    {p.description.map((line, idx) => (
-                      <div key={idx}>{line}</div>
-                    ))}
+                    {/* Description details list */}
+                    <div className="text-[10px] text-white/60 leading-normal space-y-0.5">
+                      {p.description.map((line, idx) => (
+                        <div key={idx}>{line}</div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Bottom checkout elements (Pricing & Subscribe capsule button) */}
-                <div className="mt-auto pt-4">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-3xl font-black text-white">INR {p.price}</span>
-                  </div>
-                  
-                  <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mt-0.5">
-                    {p.period}
-                  </div>
-
-                  {p.originalPrice && (
-                    <div className="flex items-center gap-2 mt-2 mb-4">
-                      <span className="text-xs text-white/30 line-through">₹{p.originalPrice}</span>
-                      <span className="text-[8px] font-black text-[#cca238] uppercase bg-[#cca238]/10 border border-[#cca238]/20 px-1.5 py-0.5 rounded">
-                        BEST DEAL
-                      </span>
+                {/* Bottom checkout container (starts below horizontal perforation) */}
+                <div className="h-[145px] flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-black text-white">INR {p.price}</span>
                     </div>
-                  )}
+                    
+                    <div className="text-white/40 text-[9px] font-black tracking-widest uppercase mt-0.5">
+                      {p.period}
+                    </div>
+
+                    {p.originalPrice && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-white/30 line-through">₹{p.originalPrice}</span>
+                        <span className="text-[8px] font-black text-[#cca238] uppercase bg-[#cca238]/10 border border-[#cca238]/20 px-1.5 py-0.5 rounded">
+                          BEST DEAL
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
                   <button
                     onClick={() => handleCheckout(p)}
@@ -343,7 +356,7 @@ export default function Subscription() {
                 <div className="w-4 h-[1px] bg-current" />
                 <div className="w-4 h-[2px] bg-current" />
               </div>
-              <span className={`text-[8.5px] font-black tracking-[0.25em] ${ANNUAL_WIDE_PLAN.stubText} uppercase whitespace-nowrap rotate-90 my-auto`}>
+              <span className={`text-[8.5px] font-black tracking-[0.25em] ${ANNUAL_WIDE_PLAN.stubText} uppercase whitespace-nowrap -rotate-90 my-auto`}>
                 ADMIT ONE
               </span>
               <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30`}>
