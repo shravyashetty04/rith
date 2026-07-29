@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Film, Tv, Users as UsersIcon, Crown, BarChart3, Settings, Bell, Search,
@@ -9,6 +9,7 @@ import {
 import { useApp } from '../store';
 import { TITLES, PROFILES } from '../data';
 import api from '../api';
+import type { Title } from '../types';
 
 type Tab = 'dashboard' | 'content' | 'users' | 'subs' | 'analytics' | 'cms' | 'settings';
 
@@ -26,6 +27,7 @@ export default function Admin() {
   const { back, navigate, catalogVersion } = useApp();
   const [tab, setTab] = useState<Tab>('dashboard');
   const [sidebar, setSidebar] = useState(false);
+  const [editingTitle, setEditingTitle] = useState<Title | null>(null);
 
   return (
     <div className="fixed inset-0 bg-ink-975 flex text-white">
@@ -79,11 +81,25 @@ export default function Admin() {
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {tab === 'dashboard' && <Dashboard />}
-          {tab === 'content' && <Content setTab={setTab} />}
+          {tab === 'content' && (
+            <Content
+              setTab={setTab}
+              onEdit={(t) => {
+                setEditingTitle(t);
+                setTab('cms');
+              }}
+            />
+          )}
           {tab === 'users' && <Users />}
           {tab === 'subs' && <Subs />}
           {tab === 'analytics' && <Analytics />}
-          {tab === 'cms' && <CMS setTab={setTab} />}
+          {tab === 'cms' && (
+            <CMS
+              setTab={setTab}
+              editingTitle={editingTitle}
+              clearEditing={() => setEditingTitle(null)}
+            />
+          )}
           {tab === 'settings' && <AdminSettings />}
         </div>
       </main>
@@ -210,16 +226,16 @@ function Dashboard() {
   );
 }
 
-function Content({ setTab }: { setTab: (t: Tab) => void }) {
-  const { catalogVersion } = useApp();
+function Content({ setTab, onEdit }: { setTab: (t: Tab) => void; onEdit: (t: Title) => void }) {
+  const { catalog } = useApp();
   const [q, setQ] = useState('');
-  const filtered = TITLES.filter((t) => t.title.toLowerCase().includes(q.toLowerCase()));
+  const filtered = catalog.filter((t) => t.title.toLowerCase().includes(q.toLowerCase()));
   return (
     <div className="space-y-4 text-white">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-black">Content Library</h1>
-          <p className="text-white/50 text-sm">{TITLES.length} titles published</p>
+          <p className="text-white/50 text-sm">{catalog.length} titles published</p>
         </div>
         <button
           onClick={() => setTab('cms')}
@@ -264,7 +280,14 @@ function Content({ setTab }: { setTab: (t: Tab) => void }) {
                  </td>
                 <td className="p-4 hidden lg:table-cell">{(Math.random() * 5 + 0.5).toFixed(1)}M</td>
                 <td className="p-4"><span className="flex items-center gap-1 text-amber-400"><Star size={12} className="fill-amber-400" /> {t.imdb}</span></td>
-                <td className="p-4"><button className="p-1.5 hover:bg-white/10 rounded"><MoreHorizontal size={16} /></button></td>
+                <td className="p-4">
+                  <button
+                    onClick={() => onEdit(t)}
+                    className="px-3 py-1 bg-brand-500/20 hover:bg-brand-500 text-brand-400 hover:text-white text-xs font-bold rounded-lg border border-brand-500/30 transition-all active:scale-95"
+                  >
+                    Edit
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -425,7 +448,7 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-function CMS({ setTab }: { setTab: (t: Tab) => void }) {
+function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void; editingTitle: Title | null; clearEditing: () => void }) {
   const { refreshCatalog, catalog, setCatalog } = useApp();
   const [title, setTitle] = useState('');
   const [type, setType] = useState<'movie' | 'series' | 'live'>('movie');
@@ -474,13 +497,67 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
     setSuccess('');
   };
 
+  // Sync state with editingTitle if editing
+  useEffect(() => {
+    if (editingTitle) {
+      setTitle(editingTitle.title);
+      setType(editingTitle.type === 'series' || editingTitle.type === 'live' ? editingTitle.type : 'movie');
+      setYear(String(editingTitle.year));
+      setAgeRating(editingTitle.rating);
+      setDirector(editingTitle.director || '');
+      setStudio(editingTitle.studio || '');
+      setDescription(editingTitle.description);
+      setPoster(editingTitle.poster);
+      setBackdrop(editingTitle.backdrop);
+      setSelectedGenres(editingTitle.genres);
+      setImdb(String(editingTitle.imdb));
+      setDuration(editingTitle.duration);
+      setIsFeatured(editingTitle.isFeatured || false);
+      setIsTrending(editingTitle.trending || false);
+      setIsNewRelease(editingTitle.isNew || false);
+      setIsOriginal(editingTitle.isOriginal || false);
+      setIsPremium(editingTitle.isPremium || false);
+      setCustomVideoUrl(editingTitle.videoUrl);
+      setVideoFileName(editingTitle.videoUrl.startsWith('data:') ? 'Uploaded Base64 File' : editingTitle.videoUrl.split('/').pop() || '');
+    } else {
+      clearForm();
+    }
+  }, [editingTitle]);
+
+  // Dynamic file upload helper using server's upload endpoint
+  const handleFileUpload = async (file: File, fileType: 'video' | 'poster' | 'backdrop') => {
+    try {
+      setLoading(true);
+      setSuccess('');
+      const b64 = await fileToBase64(file);
+      const ext = file.name.split('.').pop();
+      const uniqueName = `${fileType}_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
+      
+      const res = await api.uploadFile(uniqueName, b64);
+      if (res && res.url) {
+        if (fileType === 'video') {
+          setVideoFileName(file.name);
+          setCustomVideoUrl(res.url);
+        } else if (fileType === 'poster') {
+          setPoster(res.url);
+        } else if (fileType === 'backdrop') {
+          setBackdrop(res.url);
+        }
+      }
+    } catch (err: any) {
+      console.error('File upload failed:', err);
+      alert('Upload failed: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePublish = async () => {
     if (!title) return;
     setLoading(true);
     setSuccess('');
 
-    const newTitle = {
-      id: 't_custom_' + Math.random().toString(36).substring(2, 9),
+    const titleFields = {
       title,
       type,
       year: parseInt(year) || 2024,
@@ -495,8 +572,6 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
       genres: selectedGenres,
       duration: duration || '2h 00m',
       imdb: parseFloat(imdb) || 8.2,
-      match: Math.floor(Math.random() * 8) + 92,
-      tags: ['4K Ultra HD', 'Dolby Atmos', 'HDR'],
       isNew: isNewRelease,
       isOriginal: isOriginal,
       trending: isTrending,
@@ -506,41 +581,59 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
     };
 
     try {
-      await api.adminCreateTitle(newTitle);
-      setCatalog((prev) => {
-        const merged = [...prev];
-        const dupIndex = merged.findIndex((t) => t.title.toLowerCase().trim() === newTitle.title.toLowerCase().trim());
-        if (dupIndex !== -1) {
-          merged[dupIndex] = { ...merged[dupIndex], ...newTitle } as any;
-          return merged;
-        }
-        return [newTitle as any, ...prev];
-      });
+      if (editingTitle) {
+        await api.adminUpdateTitle(editingTitle.id, titleFields);
+        setCatalog((prev) => prev.map((t) => t.id === editingTitle.id ? { ...t, ...titleFields } : t));
+        setSuccess(`"${title}" updated successfully!`);
+        clearEditing();
+      } else {
+        const newTitle = {
+          id: 't_custom_' + Math.random().toString(36).substring(2, 9),
+          match: Math.floor(Math.random() * 8) + 92,
+          tags: ['4K Ultra HD', 'Dolby Atmos', 'HDR'],
+          ...titleFields,
+        };
+        await api.adminCreateTitle(newTitle);
+        setCatalog((prev) => {
+          const merged = [...prev];
+          const dupIndex = merged.findIndex((t) => t.title.toLowerCase().trim() === newTitle.title.toLowerCase().trim());
+          if (dupIndex !== -1) {
+            merged[dupIndex] = { ...merged[dupIndex], ...newTitle } as any;
+            return merged;
+          }
+          return [newTitle as any, ...prev];
+        });
+        setSuccess(`"${title}" published successfully to catalog!`);
+      }
       refreshCatalog();
-      setSuccess(`"${title}" published successfully to catalog!`);
-
-      // Clear fields
-      setTitle('');
-      setDirector('');
-      setStudio('');
-      setDescription('');
-      setPoster('');
-      setBackdrop('');
-      setVideoFileName('');
-      setCustomVideoUrl('');
-    } catch (err) {
-      console.warn('Backend server offline. Simulating local title creation.', err);
-      setCatalog((prev) => {
-        const merged = [...prev];
-        const dupIndex = merged.findIndex((t) => t.title.toLowerCase().trim() === newTitle.title.toLowerCase().trim());
-        if (dupIndex !== -1) {
-          merged[dupIndex] = { ...merged[dupIndex], ...newTitle } as any;
-          return merged;
-        }
-        return [newTitle as any, ...prev];
-      });
+      clearForm();
+    } catch (err: any) {
+      console.warn('Backend server error. Performing local simulation.', err);
+      // Fallback local state simulation
+      if (editingTitle) {
+        setCatalog((prev) => prev.map((t) => t.id === editingTitle.id ? { ...t, ...titleFields } : t));
+        setSuccess(`"${title}" updated successfully (simulation mode)!`);
+        clearEditing();
+      } else {
+        const newTitle = {
+          id: 't_custom_' + Math.random().toString(36).substring(2, 9),
+          match: Math.floor(Math.random() * 8) + 92,
+          tags: ['4K Ultra HD', 'Dolby Atmos', 'HDR'],
+          ...titleFields,
+        };
+        setCatalog((prev) => {
+          const merged = [...prev];
+          const dupIndex = merged.findIndex((t) => t.title.toLowerCase().trim() === newTitle.title.toLowerCase().trim());
+          if (dupIndex !== -1) {
+            merged[dupIndex] = { ...merged[dupIndex], ...newTitle } as any;
+            return merged;
+          }
+          return [newTitle as any, ...prev];
+        });
+        setSuccess(`"${title}" published successfully (simulation mode)!`);
+      }
       refreshCatalog();
-      setSuccess(`"${title}" published successfully (simulation mode)!`);
+      clearForm();
     } finally {
       setLoading(false);
     }
@@ -634,16 +727,9 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            const b64 = await fileToBase64(file);
-                            setPoster(b64);
-                          } catch (err) {
-                            console.error(err);
-                          }
-                        }
+                        if (file) handleFileUpload(file, 'poster');
                       }}
                       className="hidden"
                     />
@@ -667,16 +753,9 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            const b64 = await fileToBase64(file);
-                            setBackdrop(b64);
-                          } catch (err) {
-                            console.error(err);
-                          }
-                        }
+                        if (file) handleFileUpload(file, 'backdrop');
                       }}
                       className="hidden"
                     />
@@ -726,10 +805,7 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
                 accept="video/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) {
-                    setVideoFileName(file.name);
-                    setCustomVideoUrl(URL.createObjectURL(file));
-                  }
+                  if (file) handleFileUpload(file, 'video');
                 }}
                 className="hidden"
               />
@@ -742,13 +818,27 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
               </div>
             </label>
 
-            <button
-              onClick={handlePublish}
-              disabled={loading || !title}
-              className="px-6 py-3 rounded-lg brand-gradient font-bold text-sm hover:scale-[1.01] transition-transform disabled:opacity-50"
-            >
-              {loading ? 'Publishing...' : 'Publish Title'}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handlePublish}
+                disabled={loading || !title}
+                className="px-6 py-3 rounded-lg brand-gradient font-bold text-sm hover:scale-[1.01] transition-transform disabled:opacity-50"
+              >
+                {loading ? (editingTitle ? 'Updating...' : 'Publishing...') : (editingTitle ? 'Update Title' : 'Publish Title')}
+              </button>
+              {editingTitle && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearEditing();
+                    setTab('content');
+                  }}
+                  className="px-6 py-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 font-bold text-sm transition-colors"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <div className="glass rounded-2xl p-6">

@@ -268,6 +268,54 @@ const server = http.createServer((req, res) => {
       return;
     }
 
+    // PUT /api/admin/titles/:id
+    if (req.method === 'PUT' && pathname.startsWith('/api/admin/titles/')) {
+      const id = pathname.substring('/api/admin/titles/'.length);
+      const db = readDB();
+      if (!db.titles) db.titles = [];
+
+      const index = db.titles.findIndex((t) => t.id === id);
+      if (index !== -1) {
+        db.titles[index] = {
+          ...db.titles[index],
+          ...parsedBody,
+          updated_at: new Date().toISOString()
+        };
+        writeDB(db);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(db.titles[index]));
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Title not found');
+      }
+      return;
+    }
+
+    // POST /api/upload
+    if (req.method === 'POST' && pathname === '/api/upload') {
+      const UPLOADS_DIR = path.join(__dirname, '..', 'public', 'uploads');
+      if (!fs.existsSync(UPLOADS_DIR)) {
+        fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+      }
+
+      const { fileName, fileData } = parsedBody;
+      if (!fileName || !fileData) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Missing fileName or fileData' }));
+        return;
+      }
+
+      const base64Data = fileData.replace(/^data:[^;]+;base64,/, '');
+      const buffer = Buffer.from(base64Data, 'base64');
+      const targetPath = path.join(UPLOADS_DIR, fileName);
+
+      fs.writeFileSync(targetPath, buffer);
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ url: `/uploads/${fileName}` }));
+      return;
+    }
+
     // 404 Not Found
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Endpoint Not Found');

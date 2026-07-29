@@ -532,6 +532,17 @@ export const api = {
     }
   },
 
+  async uploadFile(fileName: string, fileData: string) {
+    if (isConfigured) {
+      return { url: fileData };
+    } else {
+      return await localFetch('/upload', {
+        method: 'POST',
+        body: JSON.stringify({ fileName, fileData }),
+      });
+    }
+  },
+
   async adminDeleteTitle(id: string) {
     if (isConfigured) {
       const { error } = await supabase.from('titles').delete().eq('id', id);
