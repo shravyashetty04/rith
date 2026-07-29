@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Crown, Lock, Smartphone, CreditCard, ChevronLeft, QrCode, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
-import { useApp } from '../store';
+import { useApp, PROFILES } from '../store';
 import { PLANS } from '../data';
 import api from '../api';
 
 export default function SignupFlow({ email: prefilledEmail }: { email?: string }) {
-  const { navigate, setAuthed } = useApp();
+  const { navigate, setAuthed, setProfile } = useApp();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedPlan, setSelectedPlan] = useState('premium');
   const [cycle, setCycle] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
@@ -87,9 +87,8 @@ export default function SignupFlow({ email: prefilledEmail }: { email?: string }
 
   const finishSetup = () => {
     setAuthed(true);
-    // Redirect to profiles selection page with Netflix success param
-    navigate({ name: 'profiles' });
-    // Push url query param
+    setProfile(PROFILES[0]);
+    navigate({ name: 'home' });
     window.history.pushState({}, '', '/in/?accountCreated=success');
   };
 

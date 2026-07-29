@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AppProvider, useApp } from './store';
 import Navbar from './components/Navbar';
 import Splash from './screens/Splash';
@@ -16,6 +17,12 @@ import SignupFlow from './screens/SignupFlow';
 
 function Router() {
   const { route, navigate, isAuthed } = useApp();
+
+  useEffect(() => {
+    if (isAuthed && route.name === 'profiles') {
+      navigate({ name: 'home' });
+    }
+  }, [isAuthed, route.name, navigate]);
 
   // If not authenticated, force onboarding (allow signup-flow too)
   if (!isAuthed && route.name !== 'onboarding' && route.name !== 'auth' && route.name !== 'splash' && route.name !== 'signup-flow') {

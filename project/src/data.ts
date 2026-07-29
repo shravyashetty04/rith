@@ -423,8 +423,6 @@ export const GENRES: Genre[] = [
 
 export const PROFILES: Profile[] = [
   { id: 'p1', name: 'Alex', avatar: '🦊', isKids: false, color: '#E50914' },
-  { id: 'p2', name: 'Jordan', avatar: '🐯', isKids: false, color: '#3b82f6' },
-  { id: 'p3', name: 'Kids', avatar: '🐼', isKids: true, pinProtected: true, color: '#22c55e' },
 ];
 
 export const PLANS: Plan[] = [

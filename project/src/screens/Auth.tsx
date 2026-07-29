@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Phone, Apple, ChevronLeft, Check } from 'lucide-react';
-import { useApp } from '../store';
+import { useApp, PROFILES } from '../store';
 
 type Mode = 'login' | 'signup' | 'forgot';
 
 export default function Auth({ mode }: { mode: Mode }) {
-  const { navigate, setAuthed } = useApp();
+  const { navigate, setAuthed, setProfile } = useApp();
   const [m, setM] = useState<Mode>(mode);
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,8 @@ export default function Auth({ mode }: { mode: Mode }) {
         return;
       }
       setAuthed(true);
-      navigate({ name: 'profiles' });
+      setProfile(PROFILES[0]);
+      navigate({ name: 'home' });
     }, 900);
   };
 
@@ -102,7 +103,7 @@ export default function Auth({ mode }: { mode: Mode }) {
                     ))}
                   </div>
                   <button
-                    onClick={() => { setAuthed(true); navigate({ name: 'profiles' }); }}
+                    onClick={() => { setAuthed(true); setProfile(PROFILES[0]); navigate({ name: 'home' }); }}
                     className="w-full mt-6 py-3.5 rounded-xl brand-gradient font-bold hover:scale-[1.02] transition-transform"
                   >
                     Verify & Continue
@@ -185,7 +186,7 @@ export default function Auth({ mode }: { mode: Mode }) {
                         key={p.label}
                         onClick={() => {
                           if (p.label === 'OTP') { setM('forgot'); setOtpSent(true); }
-                          else { setAuthed(true); navigate({ name: 'profiles' }); }
+                          else { setAuthed(true); setProfile(PROFILES[0]); navigate({ name: 'home' }); }
                         }}
                         className="flex items-center justify-center gap-2 py-3 rounded-xl glass border border-white/15 hover:bg-white/10 transition-colors text-sm font-medium"
                       >

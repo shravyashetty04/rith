@@ -184,7 +184,6 @@ export default function Navbar() {
                     </div>
                     <div className="p-1.5">
                       {[
-                        { label: 'Switch Profile', icon: User, action: () => navigate({ name: 'profiles' }) },
                         { label: 'Watch History', icon: Clock, action: () => navigate({ name: 'history' }) },
                         { label: 'My Favorites', icon: Heart, action: () => navigate({ name: 'favorites' }) },
                         { label: 'Downloads', icon: Download, action: () => navigate({ name: 'downloads' }) },
@@ -314,12 +313,6 @@ export default function Navbar() {
                       <div className="text-xs text-white/50">Premium Member</div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => { setMenuOpen(false); navigate({ name: 'profiles' }); }}
-                    className="text-xs text-brand-500 hover:text-brand-400 font-semibold"
-                  >
-                    Switch Profile
-                  </button>
                 </div>
               </div>
             </motion.div>

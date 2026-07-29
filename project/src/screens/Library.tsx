@@ -181,7 +181,6 @@ export function Settings() {
         </Group>
         <Group title="Account">
           <LinkRow label="Manage Subscription" onClick={() => navigate({ name: 'subscription' })} />
-          <LinkRow label="Switch Profile" onClick={() => navigate({ name: 'profiles' })} />
           <LinkRow label="Privacy & Terms" />
           <LinkRow label="Help Center" />
           <LinkRow label="Sign Out" danger onClick={() => navigate({ name: 'auth', mode: 'login' })} />

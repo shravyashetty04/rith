@@ -48,7 +48,7 @@ const AppCtx = createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [stack, setStack] = useState<Route[]>([{ name: 'splash' }]);
-  const [profile, setProfileState] = useState<Profile | null>(null);
+  const [profile, setProfileState] = useState<Profile | null>(PROFILES[0]);
   const [favorites, setFavorites] = useState<string[]>(['t1', 't4']);
   const [watchlist, setWatchlist] = useState<string[]>(['t3']);
   const [continueWatching, setContinueWatching] = useState<{ id: string; progress: number }[]>([
