@@ -23,7 +23,7 @@ const PLANS_DATA = [
     period: 'YEAR',
     price: 999,
     originalPrice: 1499,
-    cardBg: 'bg-[#141008]',
+    cardBg: 'bg-[#120e06]',
     borderColor: 'border-[#a1761f]/40 hover:border-[#a1761f]',
     stubBg: 'bg-[#cca238]',
     stubText: 'text-black',
@@ -48,7 +48,7 @@ const PLANS_DATA = [
     period: 'YEAR',
     price: 699,
     originalPrice: 1299,
-    cardBg: 'bg-[#08140c]',
+    cardBg: 'bg-[#06120b]',
     borderColor: 'border-[#155f30]/40 hover:border-[#155f30]',
     stubBg: 'bg-[#17793d]',
     stubText: 'text-white',
@@ -73,7 +73,7 @@ const PLANS_DATA = [
     period: 'MONTHS',
     price: 199,
     originalPrice: 299,
-    cardBg: 'bg-[#080d17]',
+    cardBg: 'bg-[#060b17]',
     borderColor: 'border-[#1e40af]/40 hover:border-[#1e40af]',
     stubBg: 'bg-[#1d4ed8]',
     stubText: 'text-white',
@@ -98,7 +98,7 @@ const PLANS_DATA = [
     period: '3 MONTHS',
     price: 99,
     originalPrice: 149,
-    cardBg: 'bg-[#110817]',
+    cardBg: 'bg-[#0f0617]',
     borderColor: 'border-[#5b21b6]/40 hover:border-[#5b21b6]',
     stubBg: 'bg-[#6d28d9]',
     stubText: 'text-white',
@@ -120,7 +120,7 @@ const ANNUAL_WIDE_PLAN = {
   period: 'YEAR',
   price: 499,
   originalPrice: 699,
-  cardBg: 'bg-[#17080a]',
+  cardBg: 'bg-[#170608]',
   borderColor: 'border-[#991b1b]/40 hover:border-[#991b1b]',
   stubBg: 'bg-[#b91c1c]',
   stubText: 'text-white',
@@ -172,7 +172,7 @@ export default function Subscription() {
     <div
       className="min-h-screen text-white pt-20 lg:pt-24 pb-16 relative overflow-hidden select-none"
       style={{
-        background: 'linear-gradient(to right, #180204 0%, #000000 12%, #000000 88%, #180204 100%)'
+        background: 'linear-gradient(to right, #150204 0%, #000000 12%, #000000 88%, #150204 100%)'
       }}
     >
       {/* Background ambient flares */}
@@ -218,43 +218,44 @@ export default function Subscription() {
         </div>
 
         {/* Plan Cards 4-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
           {PLANS_DATA.map((p) => (
             <div
               key={p.id}
-              className={`relative ${p.cardBg} border border-white/10 hover:border-white/20 transition-all duration-300 rounded-2xl flex flex-col overflow-hidden min-h-[460px] row-shadow`}
+              className={`relative ${p.cardBg} border ${p.borderColor} transition-all duration-300 rounded-2xl h-[520px] overflow-hidden row-shadow`}
             >
-              {/* Perforated Circle Cutouts aligned with the colored ticket stub */}
-              <div className="absolute w-6 h-6 bg-[#000000] rounded-full -top-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
-              <div className="absolute w-6 h-6 bg-[#000000] rounded-full -bottom-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
+              {/* Left edge notch cutout aligned with horizontal dashed line */}
+              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full -left-2.5 top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
+              {/* Right edge notch cutout aligned with horizontal dashed line */}
+              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full -right-2.5 top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
               
-              {/* Vertical Dashed Perforation Line */}
-              <div className="absolute right-12 top-0 bottom-0 border-r border-dashed border-white/15 pointer-events-none z-20" />
+              {/* Horizontal Dashed Perforation Line */}
+              <div className="absolute left-0 right-0 top-[340px] border-t border-dashed border-white/15 pointer-events-none z-20" />
               
-              {/* Right Solid Colored Ticket Stub Column */}
-              <div className={`absolute right-0 top-0 bottom-0 w-12 ${p.stubBg} flex flex-col items-center justify-center select-none z-10`}>
+              {/* Right Solid Colored Ticket Stub Accent Strip (from top to bottom) */}
+              <div className={`absolute right-0 top-0 bottom-0 w-8 ${p.stubBg} flex flex-col items-center justify-between py-6 select-none z-10 border-l border-white/10`}>
                 {/* Barcode top */}
-                <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30 mb-5`}>
-                  <div className="w-5 h-[1px] bg-current" />
-                  <div className="w-5 h-[3px] bg-current" />
-                  <div className="w-5 h-[1px] bg-current" />
-                  <div className="w-5 h-[2px] bg-current" />
+                <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30`}>
+                  <div className="w-4 h-[1px] bg-current" />
+                  <div className="w-4 h-[3px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
+                  <div className="w-4 h-[2px] bg-current" />
                 </div>
                 {/* Admit Text */}
-                <span className={`text-[9px] font-black tracking-[0.25em] ${p.stubText} uppercase whitespace-nowrap rotate-90 my-10`}>
+                <span className={`text-[8.5px] font-black tracking-[0.25em] ${p.stubText} uppercase whitespace-nowrap rotate-90 my-auto`}>
                   ADMIT ONE
                 </span>
                 {/* Barcode bottom */}
-                <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30 mt-5`}>
-                  <div className="w-5 h-[3px] bg-current" />
-                  <div className="w-5 h-[1px] bg-current" />
-                  <div className="w-5 h-[2px] bg-current" />
-                  <div className="w-5 h-[1px] bg-current" />
+                <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30`}>
+                  <div className="w-4 h-[3px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
+                  <div className="w-4 h-[2px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
                 </div>
               </div>
 
-              {/* Left Details Section (leaves space for ticket stub column on the right) */}
-              <div className="p-5 pr-16 flex-1 flex flex-col justify-between">
+              {/* Top Details container (h-[340px] - padded on the right to leave space for right ticket strip) */}
+              <div className="absolute top-0 left-0 right-0 h-[340px] p-5 pr-12 flex flex-col justify-between">
                 <div>
                   {/* Top Badge */}
                   <div className="h-6 flex items-center mb-3">
@@ -265,137 +266,145 @@ export default function Subscription() {
                     )}
                   </div>
 
-                  {/* Plan Name */}
+                  {/* Plan Name & Ad Free bubble */}
                   <div className="flex items-center gap-1.5 mb-1">
                     {p.subBadge && (
-                      <span className="px-1.5 py-0.5 text-[8px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5">
-                        {p.subBadge}
+                      <span className="px-1.5 py-0.5 text-[8px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {p.subBadge}
                       </span>
                     )}
-                    <h3 className="text-xl font-bold tracking-tight text-white">{p.name}</h3>
+                    <h3 className="text-lg font-bold tracking-tight text-white">{p.name}</h3>
                   </div>
 
-                  {/* Subtitle capsule info */}
-                  <div className="text-[9px] font-bold text-white/40 tracking-wider uppercase mb-5 leading-normal">
+                  {/* Subtitle taglines capsules */}
+                  <div className="inline-block bg-white/5 border border-white/10 rounded-full px-2 py-0.5 text-[8px] font-bold text-white/50 tracking-wider uppercase mb-4 max-w-full truncate">
                     {p.tagline}
                   </div>
 
-                  {/* Benefit block */}
-                  <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-[10px] font-bold tracking-wide uppercase mb-5 leading-relaxed text-center">
-                    <span className={p.benefitColor}>{p.benefit}</span>
+                  {/* Benefit text */}
+                  <div className={`text-[10px] font-bold tracking-wide uppercase leading-relaxed ${p.benefitColor} mb-3`}>
+                    {p.benefit}
                   </div>
 
-                  {/* Description points */}
-                  <div className="space-y-1 text-[11px] text-white/60 leading-relaxed mb-6">
+                  {/* Description details list */}
+                  <div className="text-[10px] text-white/60 leading-normal space-y-0.5">
                     {p.description.map((line, idx) => (
                       <div key={idx}>{line}</div>
                     ))}
                   </div>
                 </div>
+              </div>
 
-                {/* Pricing & Subscribe button */}
+              {/* Bottom checkout container (h-[180px] - starts below the dashed line) */}
+              <div className="absolute top-[340px] left-0 right-0 h-[180px] p-5 pr-12 flex flex-col justify-between">
                 <div>
-                  <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mb-1">YEAR</div>
+                  <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mb-0.5">INR {p.price}</div>
                   
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-3xl font-black text-white">INR {p.price}</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-black text-white">INR {p.price}</span>
+                    <span className="text-white/40 text-[10px] font-bold">/ {p.period}</span>
                   </div>
 
                   {p.originalPrice && (
-                    <div className="flex items-center gap-2 mb-5">
+                    <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs text-white/30 line-through">₹{p.originalPrice}</span>
-                      <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                      <span className="text-[8px] font-black text-[#cca238] uppercase bg-[#cca238]/10 border border-[#cca238]/20 px-1.5 py-0.5 rounded">
                         BEST DEAL
                       </span>
                     </div>
                   )}
-
-                  <button
-                    onClick={() => handleCheckout(p)}
-                    className={`w-full py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-all ${p.btnBg}`}
-                  >
-                    ★ SUBSCRIBE ★
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* 5th Plan: Horizontal Wide Card */}
-        <div className="max-w-7xl mx-auto px-0.5 mb-12">
-          <div className={`relative ${ANNUAL_WIDE_PLAN.cardBg} border border-white/10 hover:border-white/20 transition-all duration-300 rounded-2xl overflow-hidden min-h-[220px] row-shadow`}>
-            {/* Perforated Circle Cutouts on Dashed Line */}
-            <div className="absolute w-6 h-6 bg-[#000000] rounded-full -top-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
-            <div className="absolute w-6 h-6 bg-[#000000] rounded-full -bottom-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
-            
-            {/* Vertical Dashed Line */}
-            <div className="absolute right-12 top-0 bottom-0 border-r border-dashed border-white/15 pointer-events-none z-20" />
-            
-            {/* Ticket Stub right column */}
-            <div className={`absolute right-0 top-0 bottom-0 w-12 ${ANNUAL_WIDE_PLAN.stubBg} flex flex-col items-center justify-center select-none z-10`}>
-              <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30 mb-4`}>
-                <div className="w-5 h-[1px] bg-current" />
-                <div className="w-5 h-[2px] bg-current" />
-              </div>
-              <span className={`text-[9px] font-black tracking-[0.25em] ${ANNUAL_WIDE_PLAN.stubText} uppercase whitespace-nowrap rotate-90 my-8`}>
-                ADMIT ONE
-              </span>
-              <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30 mt-4`}>
-                <div className="w-5 h-[2px] bg-current" />
-                <div className="w-5 h-[1px] bg-current" />
-              </div>
-            </div>
-
-            {/* Horizontal contents */}
-            <div className="p-6 pr-16 md:p-8 md:pr-20 flex flex-col md:flex-row md:items-center justify-between gap-6 h-full">
-              <div className="max-w-2xl">
-                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase border border-red-500/20 mb-3.5 bg-red-500/10 ${ANNUAL_WIDE_PLAN.textColor}`}>
-                  {ANNUAL_WIDE_PLAN.badge}
-                </span>
-                
-                <h3 className="text-2xl font-black text-white flex items-center gap-2 mb-1">
-                  {ANNUAL_WIDE_PLAN.name}
-                </h3>
-                
-                <div className="text-[9px] font-bold text-white/40 tracking-wider uppercase mb-3">
-                  {ANNUAL_WIDE_PLAN.tagline}
-                </div>
-                
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2.5 text-[#EF4444]">
-                  {ANNUAL_WIDE_PLAN.benefit}
-                </p>
-                
-                <p className="text-[11px] text-white/60 leading-relaxed max-w-xl">
-                  {ANNUAL_WIDE_PLAN.description}
-                </p>
-              </div>
-
-              <div className="shrink-0 flex flex-col justify-end md:items-end min-w-[200px]">
-                <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mb-1">
-                  YEAR
-                </div>
-                
-                <div className="flex items-baseline gap-1.5 mb-1">
-                  <span className="text-3xl font-black text-white">INR 499</span>
-                </div>
-                
-                <div className="text-xs text-white/30 line-through mb-4">
-                  ₹{ANNUAL_WIDE_PLAN.originalPrice}
                 </div>
 
                 <button
-                  onClick={() => handleCheckout(ANNUAL_WIDE_PLAN)}
-                  className={`w-full md:w-44 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-all ${ANNUAL_WIDE_PLAN.btnBg}`}
+                  onClick={() => handleCheckout(p)}
+                  className={`w-full py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-all ${p.btnBg}`}
                 >
                   ★ SUBSCRIBE ★
                 </button>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* 5th Plan: Horizontal Wide Card (Red Theme) */}
+        <div className="max-w-7xl mx-auto px-0.5 mb-12">
+          <div className={`relative ${ANNUAL_WIDE_PLAN.cardBg} border ${ANNUAL_WIDE_PLAN.borderColor} transition-all duration-300 rounded-2xl h-[220px] overflow-hidden row-shadow`}>
+            
+            {/* Top notch cutout aligned with vertical dashed line */}
+            <div className="absolute w-6 h-6 bg-[#000000] border border-white/10 rounded-full -top-3 right-[236px] z-20 pointer-events-none" />
+            {/* Bottom notch cutout aligned with vertical dashed line */}
+            <div className="absolute w-6 h-6 bg-[#000000] border border-white/10 rounded-full -bottom-3 right-[236px] z-20 pointer-events-none" />
+            
+            {/* Vertical Dashed Perforation Line */}
+            <div className="absolute right-[248px] top-0 bottom-0 border-r border-dashed border-white/15 pointer-events-none z-20" />
+            
+            {/* Right Solid Colored Ticket Stub Strip */}
+            <div className={`absolute right-0 top-0 bottom-0 w-8 ${ANNUAL_WIDE_PLAN.stubBg} flex flex-col items-center justify-between py-6 select-none z-10 border-l border-white/10`}>
+              <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30`}>
+                <div className="w-4 h-[1px] bg-current" />
+                <div className="w-4 h-[2px] bg-current" />
+              </div>
+              <span className={`text-[8.5px] font-black tracking-[0.25em] ${ANNUAL_WIDE_PLAN.stubText} uppercase whitespace-nowrap rotate-90 my-auto`}>
+                ADMIT ONE
+              </span>
+              <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30`}>
+                <div className="w-4 h-[2px] bg-current" />
+                <div className="w-4 h-[1px] bg-current" />
+              </div>
+            </div>
+
+            {/* Left Content Area (leaves space for price block & ticket strip) */}
+            <div className="absolute left-0 top-0 bottom-0 right-[248px] p-6 flex flex-col justify-between">
+              <div>
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase border border-red-500/20 mb-3 bg-red-500/10 ${ANNUAL_WIDE_PLAN.textColor}`}>
+                  {ANNUAL_WIDE_PLAN.badge}
+                </span>
+                
+                <h3 className="text-2xl font-black text-white flex items-center gap-2 mb-0.5">
+                  {ANNUAL_WIDE_PLAN.name}
+                </h3>
+                
+                <div className="inline-block bg-white/5 border border-white/10 rounded-full px-2 py-0.5 text-[8px] font-bold text-white/50 tracking-wider uppercase mb-3">
+                  {ANNUAL_WIDE_PLAN.tagline}
+                </div>
+                
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-2 text-[#EF4444]">
+                  {ANNUAL_WIDE_PLAN.benefit}
+                </p>
+                
+                <p className="text-[10px] text-white/60 leading-normal max-w-xl">
+                  {ANNUAL_WIDE_PLAN.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Middle Price/Subscribe block (between left content and right ticket stub) */}
+            <div className="absolute right-[32px] top-0 bottom-0 w-[216px] p-6 flex flex-col justify-between items-end">
+              <div className="text-right">
+                <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mb-0.5">
+                  {ANNUAL_WIDE_PLAN.period} PASS
+                </div>
+                
+                <div className="flex items-baseline justify-end gap-1.5">
+                  <span className="text-2xl font-black text-white">INR {ANNUAL_WIDE_PLAN.price}</span>
+                </div>
+                
+                <div className="text-xs text-white/30 line-through">
+                  ₹{ANNUAL_WIDE_PLAN.originalPrice}
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleCheckout(ANNUAL_WIDE_PLAN)}
+                className={`w-40 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-all ${ANNUAL_WIDE_PLAN.btnBg}`}
+              >
+                ★ SUBSCRIBE ★
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Watch feature row */}
+        {/* Watch feature trust row */}
         <div className="max-w-7xl mx-auto border-t border-white/5 pt-8 mb-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
