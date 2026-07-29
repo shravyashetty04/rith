@@ -15,15 +15,22 @@ const PLANS_DATA = [
     subBadge: 'AD FREE',
     tagline: 'BEST VALUE FOR BINGE WATCHERS',
     benefit: 'EARLY ACCESS TO NEW TELUGU PREMIERES',
-    description: '4K • Dolby Atmos • Ads-Free Telugu & Tamil Movies & Web series',
-    period: '1 Year',
+    description: [
+      '4K • Dolby Atmos • Ads-Free',
+      'Telugu & Tamil Movies & Web series',
+      '• 1 Year'
+    ],
+    period: 'YEAR',
     price: 999,
     originalPrice: 1499,
-    color: '#D97706',
-    badgeColor: '#F59E0B',
-    textColor: 'text-amber-500',
-    borderColor: 'border-amber-500/20 hover:border-amber-500/60',
-    btnBg: 'bg-amber-500 hover:bg-amber-600 text-black',
+    cardBg: 'bg-[#141008]',
+    borderColor: 'border-[#a1761f]/40 hover:border-[#a1761f]',
+    stubBg: 'bg-[#cca238]',
+    stubText: 'text-black',
+    badgeBg: 'bg-[#cca238] text-black',
+    taglineBg: 'bg-white/5 border border-white/10 text-white/80',
+    benefitColor: 'text-[#cca238]',
+    btnBg: 'bg-[#cca238] text-black hover:bg-[#b08b2e]',
   },
   {
     id: 'annual_premium',
@@ -33,15 +40,22 @@ const PLANS_DATA = [
     subBadge: 'AD FREE',
     tagline: 'PREMIUM STREAMING WITH ZERO INTERRUPTIONS',
     benefit: 'SMART RECOMMENDATIONS FOR YOUR FAVORITE GENRES',
-    description: 'Full HD (1080p) • 5.1 • Ads-Free Telugu & Tamil Movies & Web series',
-    period: '1 Year',
+    description: [
+      'Full HD (1080p) • 5.1 • Ads-Free',
+      'Telugu & Tamil Movies',
+      '& Web series • 1 Year'
+    ],
+    period: 'YEAR',
     price: 699,
     originalPrice: 1299,
-    color: '#059669',
-    badgeColor: '#10B981',
-    textColor: 'text-emerald-500',
-    borderColor: 'border-emerald-500/20 hover:border-emerald-500/60',
-    btnBg: 'bg-emerald-500 hover:bg-emerald-600 text-white',
+    cardBg: 'bg-[#08140c]',
+    borderColor: 'border-[#155f30]/40 hover:border-[#155f30]',
+    stubBg: 'bg-[#17793d]',
+    stubText: 'text-white',
+    badgeBg: 'bg-[#17793d] text-white',
+    taglineBg: 'bg-white/5 border border-white/10 text-white/80',
+    benefitColor: 'text-[#10B981]',
+    btnBg: 'bg-[#17793d] text-white hover:bg-[#115e2e]',
   },
   {
     id: 'quarterly',
@@ -51,15 +65,22 @@ const PLANS_DATA = [
     subBadge: 'ADS',
     tagline: 'PERFECT FOR SHORT-TERM ACCESS',
     benefit: 'FLEXIBLE 3-MONTH PASS WITH EASY RENEWAL',
-    description: 'Full HD (1080p) • Stereo • Ads Telugu & Tamil Movies & Web series',
-    period: '3 Months',
+    description: [
+      'Full HD (1080p) • Stereo • Ads',
+      'Telugu & Tamil Movies',
+      '& Web series • 3 Months'
+    ],
+    period: 'MONTHS',
     price: 199,
     originalPrice: 299,
-    color: '#2563EB',
-    badgeColor: '#3B82F6',
-    textColor: 'text-blue-500',
-    borderColor: 'border-blue-500/20 hover:border-blue-500/60',
-    btnBg: 'bg-blue-600 hover:bg-blue-700 text-white',
+    cardBg: 'bg-[#080d17]',
+    borderColor: 'border-[#1e40af]/40 hover:border-[#1e40af]',
+    stubBg: 'bg-[#1d4ed8]',
+    stubText: 'text-white',
+    badgeBg: 'bg-[#1d4ed8] text-white',
+    taglineBg: 'bg-white/5 border border-white/10 text-white/80',
+    benefitColor: 'text-[#3B82F6]',
+    btnBg: 'bg-[#1d4ed8] text-white hover:bg-[#173fa5]',
   },
   {
     id: 'quarterly_mobile',
@@ -69,15 +90,22 @@ const PLANS_DATA = [
     subBadge: '',
     tagline: 'MOBILE-ONLY STREAMING ON THE GO',
     benefit: 'POCKET-FRIENDLY PLAN FOR COMMUTERS AND STUDENTS',
-    description: 'HD (720p) • Stream on mobile only Autorenew @₹149 • Stereo • Ads Telugu & Tamil Movies & Web series',
-    period: '3 Months',
+    description: [
+      'HD (720p) • Stream on mobile only',
+      'Autorenew @₹149 • Stereo • Ads',
+      'Telugu & Tamil Movies & Web series • 3 Months'
+    ],
+    period: '3 MONTHS',
     price: 99,
     originalPrice: 149,
-    color: '#7C3AED',
-    badgeColor: '#8B5CF6',
-    textColor: 'text-violet-500',
-    borderColor: 'border-violet-500/20 hover:border-violet-500/60',
-    btnBg: 'bg-violet-600 hover:bg-violet-700 text-white',
+    cardBg: 'bg-[#110817]',
+    borderColor: 'border-[#5b21b6]/40 hover:border-[#5b21b6]',
+    stubBg: 'bg-[#6d28d9]',
+    stubText: 'text-white',
+    badgeBg: 'bg-[#6d28d9] text-white',
+    taglineBg: 'bg-white/5 border border-white/10 text-white/80',
+    benefitColor: 'text-[#8B5CF6]',
+    btnBg: 'bg-[#6d28d9] text-white hover:bg-[#551da8]',
   }
 ];
 
@@ -88,15 +116,19 @@ const ANNUAL_WIDE_PLAN = {
   badge: '★ LIMITED ADS ★',
   tagline: 'LOWEST ANNUAL PRICE WITH TOP FEATURES',
   benefit: 'EXCLUSIVE FESTIVAL COLLECTIONS AND FAMILY SHARING TIPS',
-  description: 'Full HD (1080p) • Stereo • Limited Ads Telugu & Tamil Movies & Web series',
-  period: '1 Year',
+  description: 'Full HD (1080p) • Stereo • Limited Ads • Telugu & Tamil Movies & Web series • 1 Year',
+  period: 'YEAR',
   price: 499,
   originalPrice: 699,
-  color: '#DC2626',
-  badgeColor: '#EF4444',
+  cardBg: 'bg-[#17080a]',
+  borderColor: 'border-[#991b1b]/40 hover:border-[#991b1b]',
+  stubBg: 'bg-[#b91c1c]',
+  stubText: 'text-white',
+  badgeBg: 'bg-[#b91c1c] text-white',
+  taglineBg: 'bg-white/5 border border-white/10 text-white/80',
   textColor: 'text-red-500',
-  borderColor: 'border-red-600/20 hover:border-red-600/60',
-  btnBg: 'bg-red-600 hover:bg-red-700 text-white',
+  benefitColor: 'text-[#EF4444]',
+  btnBg: 'bg-[#b91c1c] text-white hover:bg-[#991717]',
 };
 
 export default function Subscription() {
@@ -137,11 +169,15 @@ export default function Subscription() {
   }
 
   return (
-    <div className="min-h-screen bg-[#07080c] text-white pt-20 lg:pt-24 pb-16 relative overflow-hidden">
+    <div
+      className="min-h-screen text-white pt-20 lg:pt-24 pb-16 relative overflow-hidden select-none"
+      style={{
+        background: 'linear-gradient(to right, #180204 0%, #000000 12%, #000000 88%, #180204 100%)'
+      }}
+    >
       {/* Background ambient flares */}
-      <div className="absolute top-1/4 left-[-10%] w-[40%] h-[30%] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/3 right-[-10%] w-[40%] h-[30%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 left-[40%] w-[30%] h-[20%] bg-red-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-[5%] w-[40%] h-[30%] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 right-[5%] w-[40%] h-[30%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="page-shell relative z-10">
         {/* Back button */}
@@ -150,86 +186,87 @@ export default function Subscription() {
         </button>
 
         {/* Top Header Section */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="text-amber-500 font-black tracking-[0.35em] text-xs uppercase flex items-center justify-center gap-1.5 mb-2.5">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="text-[#cca238] font-black tracking-[0.35em] text-xs uppercase flex items-center justify-center gap-1.5 mb-2">
             <span>★</span> CHOOSE YOUR <span>★</span>
           </div>
           <h1 className="font-display text-5xl sm:text-7xl tracking-wide uppercase text-white drop-shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4">
             Perfect Plan
           </h1>
-          <div className="inline-block bg-[#e5a93b]/10 border border-[#e5a93b]/20 px-5 py-1.5 rounded-full mb-6">
-            <span className="text-[#e5a93b] text-xs font-black tracking-widest uppercase">
+          <div className="inline-block bg-[#cca238]/10 border border-[#cca238]/20 px-5 py-1 rounded-full mb-5">
+            <span className="text-[#cca238] text-[10px] sm:text-xs font-black tracking-widest uppercase">
               PREMIUM ENTERTAINMENT. YOUR WAY.
             </span>
           </div>
-          <p className="text-white/70 text-sm sm:text-base leading-relaxed">
+          <p className="text-white/70 text-sm leading-relaxed">
             Unlock exclusive Telugu & Tamil hits, ad-free premieres, and unbeatable yearly savings in one premium plan.
           </p>
         </div>
 
         {/* Filters pills rows */}
-        <div className="flex flex-col items-center mb-12">
-          <div className="flex flex-wrap justify-center items-center gap-4 text-xs font-bold text-white/60 tracking-wider uppercase bg-white/5 px-6 py-2.5 rounded-full border border-white/10">
+        <div className="flex flex-col items-center mb-10">
+          <div className="flex flex-wrap justify-center items-center gap-4 text-[10px] font-bold text-white/50 tracking-wider uppercase bg-white/5 px-5 py-2 rounded-full border border-white/10">
             <span>4K MOVIES</span>
             <span className="text-white/20">•</span>
             <span>OFFLINE DOWNLOADS</span>
             <span className="text-white/20">•</span>
             <span>EXCLUSIVE ORIGINALS</span>
           </div>
-          <div className="text-amber-500/30 tracking-widest text-[8px] sm:text-xs font-bold mt-4 select-none">
+          <div className="text-amber-500/20 tracking-widest text-[8px] sm:text-xs font-bold mt-4 select-none">
             •••••••••••••••••••••••••••••••••••••••••••••
           </div>
         </div>
 
         {/* Plan Cards 4-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-6">
           {PLANS_DATA.map((p) => (
             <div
               key={p.id}
-              className={`relative glass border border-white/10 hover:border-white/20 transition-all duration-300 rounded-2xl flex flex-col overflow-hidden min-h-[460px] row-shadow`}
+              className={`relative ${p.cardBg} border border-white/10 hover:border-white/20 transition-all duration-300 rounded-2xl flex flex-col overflow-hidden min-h-[460px] row-shadow`}
             >
-              {/* Ticket Notches */}
-              <div className="absolute w-5 h-8 bg-[#07080c] rounded-r-full -left-2.5 top-[60%] -translate-y-1/2 border-r border-t border-b border-white/10 z-20 pointer-events-none" />
-              <div className="absolute w-5 h-8 bg-[#07080c] rounded-l-full -right-2.5 top-[60%] -translate-y-1/2 border-l border-t border-b border-white/10 z-20 pointer-events-none" />
+              {/* Perforated Circle Cutouts aligned with the colored ticket stub */}
+              <div className="absolute w-6 h-6 bg-[#000000] rounded-full -top-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
+              <div className="absolute w-6 h-6 bg-[#000000] rounded-full -bottom-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
               
-              {/* Vertical Dashed Line & Rotate ADMIT ONE */}
-              <div className="absolute right-11 top-0 bottom-0 border-r border-dashed border-white/10 pointer-events-none z-20" />
+              {/* Vertical Dashed Perforation Line */}
+              <div className="absolute right-12 top-0 bottom-0 border-r border-dashed border-white/15 pointer-events-none z-20" />
               
-              <div className="absolute right-0 top-0 bottom-0 w-[42px] flex flex-col items-center justify-center pointer-events-none select-none z-20">
+              {/* Right Solid Colored Ticket Stub Column */}
+              <div className={`absolute right-0 top-0 bottom-0 w-12 ${p.stubBg} flex flex-col items-center justify-center select-none z-10`}>
                 {/* Barcode top */}
-                <div className="flex flex-col gap-0.5 opacity-20 mb-4">
-                  <div className="w-5 h-[1px] bg-white" />
-                  <div className="w-5 h-[2px] bg-white" />
-                  <div className="w-5 h-[1px] bg-white" />
-                  <div className="w-5 h-[3px] bg-white" />
+                <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30 mb-5`}>
+                  <div className="w-5 h-[1px] bg-current" />
+                  <div className="w-5 h-[3px] bg-current" />
+                  <div className="w-5 h-[1px] bg-current" />
+                  <div className="w-5 h-[2px] bg-current" />
                 </div>
-                {/* Admit text */}
-                <span className="text-[7.5px] font-black tracking-[0.25em] text-white/40 uppercase whitespace-nowrap rotate-90 my-10">
+                {/* Admit Text */}
+                <span className={`text-[9px] font-black tracking-[0.25em] ${p.stubText} uppercase whitespace-nowrap rotate-90 my-10`}>
                   ADMIT ONE
                 </span>
                 {/* Barcode bottom */}
-                <div className="flex flex-col gap-0.5 opacity-20 mt-4">
-                  <div className="w-5 h-[3px] bg-white" />
-                  <div className="w-5 h-[1px] bg-white" />
-                  <div className="w-5 h-[2px] bg-white" />
-                  <div className="w-5 h-[1px] bg-white" />
+                <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30 mt-5`}>
+                  <div className="w-5 h-[3px] bg-current" />
+                  <div className="w-5 h-[1px] bg-current" />
+                  <div className="w-5 h-[2px] bg-current" />
+                  <div className="w-5 h-[1px] bg-current" />
                 </div>
               </div>
 
-              {/* Card Contents (Padded on the right to leave space for Ticket stub) */}
-              <div className="p-6 pr-14 flex-1 flex flex-col justify-between">
+              {/* Left Details Section (leaves space for ticket stub column on the right) */}
+              <div className="p-5 pr-16 flex-1 flex flex-col justify-between">
                 <div>
                   {/* Top Badge */}
-                  <div className="h-6 flex items-center mb-4">
+                  <div className="h-6 flex items-center mb-3">
                     {p.badge && (
-                      <span className="px-2.5 py-0.5 rounded text-[9px] font-black bg-amber-500/10 text-amber-500 tracking-wider uppercase border border-amber-500/20">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase ${p.badgeBg}`}>
                         {p.badge}
                       </span>
                     )}
                   </div>
 
                   {/* Plan Name */}
-                  <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex items-center gap-1.5 mb-1">
                     {p.subBadge && (
                       <span className="px-1.5 py-0.5 text-[8px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5">
                         {p.subBadge}
@@ -238,34 +275,36 @@ export default function Subscription() {
                     <h3 className="text-xl font-bold tracking-tight text-white">{p.name}</h3>
                   </div>
 
-                  {/* Subtitle taglines */}
-                  <div className="text-[10px] font-semibold text-white/50 tracking-wider uppercase mb-5 leading-normal">
+                  {/* Subtitle capsule info */}
+                  <div className="text-[9px] font-bold text-white/40 tracking-wider uppercase mb-5 leading-normal">
                     {p.tagline}
                   </div>
 
-                  {/* Benefit */}
-                  <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-[11px] font-bold text-amber-500/90 tracking-wide uppercase mb-6 leading-relaxed">
-                    {p.benefit}
+                  {/* Benefit block */}
+                  <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-[10px] font-bold tracking-wide uppercase mb-5 leading-relaxed text-center">
+                    <span className={p.benefitColor}>{p.benefit}</span>
                   </div>
 
-                  {/* Description details */}
-                  <p className="text-[11px] text-white/60 leading-relaxed mb-6">
-                    {p.description}
-                  </p>
+                  {/* Description points */}
+                  <div className="space-y-1 text-[11px] text-white/60 leading-relaxed mb-6">
+                    {p.description.map((line, idx) => (
+                      <div key={idx}>{line}</div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Pricing & Subscribe */}
+                {/* Pricing & Subscribe button */}
                 <div>
-                  <div className="text-white/40 text-[9px] font-black tracking-widest uppercase mb-1">{p.period} PASS</div>
+                  <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mb-1">YEAR</div>
                   
                   <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-2xl font-black text-white">INR {p.price}</span>
+                    <span className="text-3xl font-black text-white">INR {p.price}</span>
                   </div>
 
                   {p.originalPrice && (
-                    <div className="flex items-center gap-2 mb-6">
+                    <div className="flex items-center gap-2 mb-5">
                       <span className="text-xs text-white/30 line-through">₹{p.originalPrice}</span>
-                      <span className="text-[9px] font-black text-emerald-400 uppercase bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
                         BEST DEAL
                       </span>
                     </div>
@@ -284,63 +323,64 @@ export default function Subscription() {
         </div>
 
         {/* 5th Plan: Horizontal Wide Card */}
-        <div className="max-w-7xl mx-auto px-1.5 mb-16">
-          <div className="relative glass border border-white/10 hover:border-white/20 transition-all duration-300 rounded-2xl overflow-hidden min-h-[220px] row-shadow">
-            {/* Ticket Notches */}
-            <div className="absolute w-5 h-8 bg-[#07080c] rounded-r-full -left-2.5 top-[60%] -translate-y-1/2 border-r border-t border-b border-white/10 z-20 pointer-events-none" />
-            <div className="absolute w-5 h-8 bg-[#07080c] rounded-l-full -right-2.5 top-[60%] -translate-y-1/2 border-l border-t border-b border-white/10 z-20 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-0.5 mb-12">
+          <div className={`relative ${ANNUAL_WIDE_PLAN.cardBg} border border-white/10 hover:border-white/20 transition-all duration-300 rounded-2xl overflow-hidden min-h-[220px] row-shadow`}>
+            {/* Perforated Circle Cutouts on Dashed Line */}
+            <div className="absolute w-6 h-6 bg-[#000000] rounded-full -top-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
+            <div className="absolute w-6 h-6 bg-[#000000] rounded-full -bottom-3 right-[36px] border border-white/10 z-20 pointer-events-none" />
             
-            {/* Vertical Dashed Line & Rotate ADMIT ONE */}
-            <div className="absolute right-11 top-0 bottom-0 border-r border-dashed border-white/10 pointer-events-none z-20" />
+            {/* Vertical Dashed Line */}
+            <div className="absolute right-12 top-0 bottom-0 border-r border-dashed border-white/15 pointer-events-none z-20" />
             
-            <div className="absolute right-0 top-0 bottom-0 w-[42px] flex flex-col items-center justify-center pointer-events-none select-none z-20">
-              <div className="flex flex-col gap-0.5 opacity-20 mb-3">
-                <div className="w-5 h-[1px] bg-white" />
-                <div className="w-5 h-[2px] bg-white" />
+            {/* Ticket Stub right column */}
+            <div className={`absolute right-0 top-0 bottom-0 w-12 ${ANNUAL_WIDE_PLAN.stubBg} flex flex-col items-center justify-center select-none z-10`}>
+              <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30 mb-4`}>
+                <div className="w-5 h-[1px] bg-current" />
+                <div className="w-5 h-[2px] bg-current" />
               </div>
-              <span className="text-[7.5px] font-black tracking-[0.25em] text-white/40 uppercase whitespace-nowrap rotate-90 my-6">
+              <span className={`text-[9px] font-black tracking-[0.25em] ${ANNUAL_WIDE_PLAN.stubText} uppercase whitespace-nowrap rotate-90 my-8`}>
                 ADMIT ONE
               </span>
-              <div className="flex flex-col gap-0.5 opacity-20 mt-3">
-                <div className="w-5 h-[2px] bg-white" />
-                <div className="w-5 h-[1px] bg-white" />
+              <div className={`flex flex-col gap-0.5 ${ANNUAL_WIDE_PLAN.stubText} opacity-30 mt-4`}>
+                <div className="w-5 h-[2px] bg-current" />
+                <div className="w-5 h-[1px] bg-current" />
               </div>
             </div>
 
             {/* Horizontal contents */}
-            <div className="p-6 pr-14 md:p-8 md:pr-16 flex flex-col md:flex-row md:items-center justify-between gap-6 h-full">
+            <div className="p-6 pr-16 md:p-8 md:pr-20 flex flex-col md:flex-row md:items-center justify-between gap-6 h-full">
               <div className="max-w-2xl">
-                <span className="inline-block px-2.5 py-0.5 rounded text-[9px] font-black bg-red-500/10 text-red-500 tracking-wider uppercase border border-red-500/20 mb-3.5">
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase border border-red-500/20 mb-3.5 bg-red-500/10 ${ANNUAL_WIDE_PLAN.textColor}`}>
                   {ANNUAL_WIDE_PLAN.badge}
                 </span>
                 
-                <h3 className="text-2xl font-black text-white flex items-center gap-2 mb-1.5">
+                <h3 className="text-2xl font-black text-white flex items-center gap-2 mb-1">
                   {ANNUAL_WIDE_PLAN.name}
                 </h3>
                 
-                <div className="text-[10px] font-bold text-white/50 tracking-wider uppercase mb-3">
+                <div className="text-[9px] font-bold text-white/40 tracking-wider uppercase mb-3">
                   {ANNUAL_WIDE_PLAN.tagline}
                 </div>
                 
-                <p className="text-[11px] text-amber-500/90 font-bold uppercase tracking-wider mb-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-2.5 text-[#EF4444]">
                   {ANNUAL_WIDE_PLAN.benefit}
                 </p>
                 
-                <p className="text-[11px] text-white/60 leading-normal max-w-xl">
+                <p className="text-[11px] text-white/60 leading-relaxed max-w-xl">
                   {ANNUAL_WIDE_PLAN.description}
                 </p>
               </div>
 
               <div className="shrink-0 flex flex-col justify-end md:items-end min-w-[200px]">
-                <div className="text-white/40 text-[9px] font-black tracking-widest uppercase mb-1">
-                  {ANNUAL_WIDE_PLAN.period} PASS
+                <div className="text-white/30 text-[9px] font-black tracking-widest uppercase mb-1">
+                  YEAR
                 </div>
                 
-                <div className="flex items-baseline gap-1.5 mb-1.5">
-                  <span className="text-3xl font-black text-white">INR {ANNUAL_WIDE_PLAN.price}</span>
+                <div className="flex items-baseline gap-1.5 mb-1">
+                  <span className="text-3xl font-black text-white">INR 499</span>
                 </div>
                 
-                <div className="text-xs text-white/30 line-through mb-5">
+                <div className="text-xs text-white/30 line-through mb-4">
                   ₹{ANNUAL_WIDE_PLAN.originalPrice}
                 </div>
 
@@ -356,7 +396,7 @@ export default function Subscription() {
         </div>
 
         {/* Watch feature row */}
-        <div className="max-w-7xl mx-auto border-t border-white/5 pt-8 mb-12">
+        <div className="max-w-7xl mx-auto border-t border-white/5 pt-8 mb-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { icon: Laptop, text: 'Watch on any device' },
@@ -365,7 +405,7 @@ export default function Subscription() {
               { icon: HelpCircle, text: '24x7 Customer support' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0 text-amber-500">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0 text-[#cca238]">
                   <item.icon size={18} />
                 </div>
                 <span className="text-[11px] sm:text-xs font-bold text-white/80 leading-snug">
@@ -380,11 +420,11 @@ export default function Subscription() {
         <div className="max-w-7xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <span className="text-amber-500 text-[10px] font-black tracking-widest uppercase block mb-1">YOUR EXCLUSIVE EDGE</span>
+              <span className="text-[#cca238] text-[10px] font-black tracking-widest uppercase block mb-1">YOUR EXCLUSIVE EDGE</span>
               <h2 className="text-lg sm:text-2xl font-black text-white">Unique perks you won&apos;t find anywhere else</h2>
             </div>
-            <span className="px-2.5 py-1 rounded text-[9px] font-black bg-amber-500/10 text-amber-500 tracking-widest uppercase border border-amber-500/20 flex items-center gap-1">
-              <Star size={10} className="fill-amber-500" /> PREMIUM
+            <span className="px-2.5 py-1 rounded text-[9px] font-black bg-[#cca238]/10 text-[#cca238] tracking-widest uppercase border border-[#cca238]/20 flex items-center gap-1">
+              <Star size={10} className="fill-[#cca238]" /> PREMIUM
             </span>
           </div>
 
@@ -396,7 +436,7 @@ export default function Subscription() {
               { icon: ShieldCheck, title: 'Smart Savings', desc: 'Best deals updated automatically.' },
             ].map((perk, i) => (
               <div key={i} className="p-4 bg-black/40 border border-white/5 rounded-xl flex gap-3 hover:border-white/10 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20 shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-lg bg-[#cca238]/10 flex items-center justify-center text-[#cca238] border border-[#cca238]/20 shrink-0 mt-0.5">
                   <perk.icon size={16} />
                 </div>
                 <div>
@@ -489,7 +529,7 @@ export default function Subscription() {
                 <div className="h-px bg-white/10 my-2" />
                 <div className="flex justify-between font-black text-sm text-white">
                   <span>Grand Total</span>
-                  <span className="text-amber-500">Grand Total INR {Math.round(selectedPlan.price * 1.18)}.00</span>
+                  <span className="text-amber-500">INR {Math.round(selectedPlan.price * 1.18)}.00</span>
                 </div>
               </div>
 
