@@ -31,8 +31,8 @@ export default {
         display: ['"Bebas Neue"', 'Inter', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-fade': 'linear-gradient(to top, #0a0a0a 5%, rgba(10,10,10,0.4) 35%, rgba(10,10,10,0.1) 70%, transparent 100%)',
-        'hero-left': 'linear-gradient(to right, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.5) 40%, transparent 80%)',
+        'hero-fade': 'linear-gradient(to top, #0a0a0a 0%, rgba(10,10,10,0.15) 30%, transparent 60%)',
+        'hero-left': 'linear-gradient(to right, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.15) 30%, transparent 60%)',
         'card-fade': 'linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.3) 50%, transparent 100%)',
       },
       keyframes: {

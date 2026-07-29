@@ -11,11 +11,6 @@ export default function HeroBanner({ title }: { title: Title }) {
   const inList = watchlist.includes(title.id);
   const isFav = favorites.includes(title.id);
 
-  useEffect(() => {
-    const t = setTimeout(() => setShowVideo(true), 2500);
-    return () => clearTimeout(t);
-  }, [title.id]);
-
   return (
     <section className="relative h-[88vh] min-h-[560px] w-full overflow-hidden">
       {/* Backdrop */}
@@ -23,25 +18,11 @@ export default function HeroBanner({ title }: { title: Title }) {
         <img
           src={title.backdrop}
           alt={title.title}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            showVideo ? 'opacity-0' : 'opacity-100'
-          }`}
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=1200';
           }}
         />
-        {showVideo && (
-          <video
-            autoPlay
-            muted={muted}
-            loop
-            playsInline
-            poster={title.backdrop}
-            className="absolute inset-0 w-full h-full object-cover"
-          >
-            <source src={title.trailerUrl || title.videoUrl} type="video/mp4" />
-          </video>
-        )}
         <div className="absolute inset-0 bg-hero-fade" />
         <div className="absolute inset-0 bg-hero-left" />
       </div>
@@ -125,15 +106,8 @@ export default function HeroBanner({ title }: { title: Title }) {
         </AnimatePresence>
       </div>
 
-      {/* Mute toggle + rating chip */}
+      {/* Rating chip */}
       <div className="absolute right-4 sm:right-6 lg:right-10 bottom-28 flex items-center gap-3">
-        <button
-          onClick={() => setMuted((m) => !m)}
-          className="w-10 h-10 rounded-full glass border border-white/40 flex items-center justify-center hover:scale-110 transition-transform"
-          aria-label={muted ? 'Unmute' : 'Mute'}
-        >
-          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-        </button>
         <div className="glass border-l-2 border-white pl-3 pr-4 py-1.5 rounded-r-lg">
           <span className="text-sm font-semibold">{title.rating}</span>
         </div>

@@ -115,4 +115,17 @@ body {
     -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
   }
+  
+  @media (max-width: 1024px) and (orientation: portrait) {
+    .mobile-landscape-lock {
+      width: 100vh !important;
+      height: 100vw !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) rotate(90deg) !important;
+      transform-origin: center center !important;
+      position: fixed !important;
+      z-index: 99999 !important;
+    }
+  }
 }

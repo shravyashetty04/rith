@@ -219,7 +219,7 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-black z-[100] overflow-hidden select-none cursor-default"
+      className="fixed inset-0 bg-black z-[100] overflow-hidden select-none cursor-default mobile-landscape-lock"
       onMouseMove={pingControls}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('[data-ctrl]')) return;
