@@ -11,6 +11,26 @@ export default function HeroBanner({ title }: { title: Title }) {
   const inList = watchlist.includes(title.id);
   const isFav = favorites.includes(title.id);
 
+  const isKaTV = title.id === 't_katv';
+
+  if (isKaTV) {
+    return (
+      <section 
+        onClick={() => navigate({ name: 'player', id: title.id })}
+        className="relative h-[88vh] min-h-[560px] w-full overflow-hidden cursor-pointer group"
+      >
+        <img
+          src={title.backdrop}
+          alt={title.title}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01]"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=1200';
+          }}
+        />
+      </section>
+    );
+  }
+
   return (
     <section className="relative h-[88vh] min-h-[560px] w-full overflow-hidden">
       {/* Backdrop */}
