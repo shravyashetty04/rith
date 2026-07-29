@@ -255,13 +255,12 @@ function Content({ setTab }: { setTab: (t: Tab) => void }) {
                 </td>
                 <td className="p-4 hidden sm:table-cell capitalize">{t.type}</td>
                 <td className="p-4 hidden md:table-cell">
-                   {t.isComingSoon ? (
-                     <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs font-semibold">Coming Soon</span>
-                   ) : t.isFeatured ? (
-                     <span className="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 text-xs font-semibold">Featured</span>
-                   ) : (
-                     <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs">Published</span>
-                   )}
+                   <div className="flex flex-wrap gap-1.5">
+                     {t.isComingSoon && <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs font-semibold">Coming Soon</span>}
+                     {t.isFeatured && <span className="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 text-xs font-semibold">Featured</span>}
+                     {t.isPremium && <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold">Premium</span>}
+                     {!t.isComingSoon && !t.isFeatured && !t.isPremium && <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs">Published</span>}
+                   </div>
                  </td>
                 <td className="p-4 hidden lg:table-cell">{(Math.random() * 5 + 0.5).toFixed(1)}M</td>
                 <td className="p-4"><span className="flex items-center gap-1 text-amber-400"><Star size={12} className="fill-amber-400" /> {t.imdb}</span></td>
@@ -444,6 +443,7 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
   const [isTrending, setIsTrending] = useState(false);
   const [isNewRelease, setIsNewRelease] = useState(false);
   const [isOriginal, setIsOriginal] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   
   const [videoFileName, setVideoFileName] = useState('');
   const [customVideoUrl, setCustomVideoUrl] = useState('');
@@ -468,6 +468,7 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
     setIsTrending(false);
     setIsNewRelease(false);
     setIsOriginal(false);
+    setIsPremium(false);
     setVideoFileName('');
     setCustomVideoUrl('');
     setSuccess('');
@@ -500,6 +501,7 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
       isOriginal: isOriginal,
       trending: isTrending,
       isFeatured: isFeatured,
+      isPremium: isPremium,
       isComingSoon: selectedGenres.includes('Coming Soon'),
     };
 
@@ -692,6 +694,7 @@ function CMS({ setTab }: { setTab: (t: Tab) => void }) {
                   { label: 'Show in Trending Now', checked: isTrending, onChange: setIsTrending },
                   { label: 'Show in New & Popular', checked: isNewRelease, onChange: setIsNewRelease },
                   { label: 'Show in Originals', checked: isOriginal, onChange: setIsOriginal },
+                  { label: 'Premium Only Title', checked: isPremium, onChange: setIsPremium },
                 ].map((p) => (
                   <label key={p.label} className="flex items-center gap-2.5 text-xs text-white/80 cursor-pointer select-none bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-2.5 rounded-lg transition-all active:scale-[0.98]">
                     <input

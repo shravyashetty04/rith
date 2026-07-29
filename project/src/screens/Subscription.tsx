@@ -5,7 +5,7 @@ import { useApp } from '../store';
 import { PLANS } from '../data';
 
 export default function Subscription() {
-  const { back, navigate } = useApp();
+  const { back, navigate, setPlan } = useApp();
   const [selected, setSelected] = useState('premium');
   const [cycle, setCycle] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [coupon, setCoupon] = useState('');
@@ -20,6 +20,7 @@ export default function Subscription() {
 
   const pay = () => {
     setDone(true);
+    setPlan(selected);
     setTimeout(() => navigate({ name: 'home' }), 1600);
   };
 

@@ -42,6 +42,8 @@ interface AppState {
   refreshCatalog: () => void;
   catalog: Title[];
   setCatalog: React.Dispatch<React.SetStateAction<Title[]>>;
+  plan: string;
+  setPlan: (p: string) => void;
 }
 
 const AppCtx = createContext<AppState | null>(null);
@@ -57,6 +59,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     { id: 't1', progress: 88 },
   ]);
   const [isAuthed, setAuthed] = useState(false);
+  const [plan, setPlan] = useState<string>('free');
   const [catalogVersion, setCatalogVersion] = useState(0);
   const [catalog, setCatalog] = useState<Title[]>(TITLES);
 
@@ -141,6 +144,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     refreshCatalog,
     catalog,
     setCatalog,
+    plan,
+    setPlan,
   };
   return <AppCtx.Provider value={value}>{children}</AppCtx.Provider>;
 }

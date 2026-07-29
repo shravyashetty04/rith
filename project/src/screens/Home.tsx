@@ -20,6 +20,7 @@ export default function Home() {
   const originals = catalog.filter((t) => t.isOriginal);
   const topRated = [...catalog].sort((a, b) => b.imdb - a.imdb).slice(0, 10);
   const comingSoon = catalog.filter((t) => t.isComingSoon);
+  const freeWatch = catalog.filter((t) => !t.isPremium && !t.isComingSoon && t.id !== 't_katv');
   
   // Category-wise filters
   const actionMovies = catalog.filter((t) => t.genres.some(g => g.toLowerCase() === 'action'));
@@ -103,6 +104,11 @@ export default function Home() {
           <div id="row-trending">
             <ContentRow title="Trending Now" titles={trending} variant="ranked" />
           </div>
+          {freeWatch.length > 0 && (
+            <div id="row-freewatch">
+              <ContentRow title="Free Watch (Free Movies & Episodes)" titles={freeWatch} variant="large" />
+            </div>
+          )}
           <div id="row-latest">
             <ContentRow title="New & Popular" titles={latest} variant="large" />
           </div>

@@ -28,6 +28,7 @@ export interface Title {
   isComingSoon?: boolean;
   isFeatured?: boolean;
   tags?: string[];
+  isPremium?: boolean;
   videoUrl: string;
   trailerUrl?: string;
   episodes?: Episode[];

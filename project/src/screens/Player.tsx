@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Play, Pause, Volume2, VolumeX, Maximize, Minimize, Settings, ChevronLeft,
   SkipForward, SkipBack, PictureInPicture, Subtitles, Languages, Rewind, FastForward,
-  Check, Gauge, Loader2, Radio,
+  Check, Gauge, Loader2, Radio, Crown, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../store';
@@ -17,7 +17,7 @@ const SUBS = ['Off', 'English', 'Spanish', 'Hindi', 'Japanese', 'French'];
 const AUDIOS = ['English', 'Hindi', 'Spanish', 'Japanese'];
 
 export default function Player({ id, episodeId }: { id: string; episodeId?: string }) {
-  const { back, navigate, setProgress } = useApp();
+  const { back, navigate, setProgress, plan } = useApp();
   const title = getTitle(id);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,24 +41,51 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
   const [showNext, setShowNext] = useState(false);
   const [seekHover, setSeekHover] = useState<number | null>(null);
 
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState<'limit' | 'premium'>('limit');
+
   const episode = title?.episodes?.find((e) => e.id === episodeId) || title?.episodes?.[0];
   const videoSrc = episode?.videoUrl || title?.videoUrl || '';
 
   const togglePlay = useCallback(() => {
+    if (title?.isPremium && plan === 'free') {
+      setShowUpgradeModal(true);
+      setUpgradeReason('premium');
+      return;
+    }
     const v = videoRef.current;
     if (!v) return;
     if (v.paused) v.play();
     else v.pause();
-  }, []);
+  }, [title?.isPremium, plan]);
 
   const seek = (t: number) => {
+    if (plan === 'free' && t >= 30) {
+      const v = videoRef.current;
+      if (v) {
+        v.currentTime = 30;
+        v.pause();
+      }
+      setShowUpgradeModal(true);
+      setUpgradeReason('limit');
+      return;
+    }
     const v = videoRef.current;
     if (v) v.currentTime = t;
   };
 
   const skip = (delta: number) => {
     const v = videoRef.current;
-    if (v) v.currentTime = Math.min(Math.max(0, v.currentTime + delta), v.duration || 0);
+    if (!v) return;
+    const target = v.currentTime + delta;
+    if (plan === 'free' && target >= 30) {
+      v.currentTime = 30;
+      v.pause();
+      setShowUpgradeModal(true);
+      setUpgradeReason('limit');
+      return;
+    }
+    v.currentTime = Math.min(Math.max(0, target), v.duration || 0);
   };
 
   const toggleFullscreen = useCallback(() => {
@@ -115,6 +142,13 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
     const onPlay = () => { setPlaying(true); pingControls(); };
     const onPause = () => setPlaying(false);
     const onTime = () => {
+      if (plan === 'free' && v.currentTime >= 30) {
+        v.pause();
+        setPlaying(false);
+        setShowUpgradeModal(true);
+        setUpgradeReason('limit');
+        return;
+      }
       setCurrent(v.currentTime);
       setProgress(id, (v.currentTime / (v.duration || 1)) * 100);
       // skip intro cue 15-45s
@@ -148,7 +182,7 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
       v.removeEventListener('canplay', onCanPlay);
       document.removeEventListener('fullscreenchange', onFs);
     };
-  }, [id, setProgress, pingControls]);
+  }, [id, setProgress, pingControls, plan]);
 
   // Apply volume/mute/speed
   useEffect(() => {
@@ -158,6 +192,16 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
     v.muted = muted;
     v.playbackRate = speed;
   }, [volume, muted, speed]);
+
+  // Premium auto-pause guard on mount
+  useEffect(() => {
+    if (title?.isPremium && plan === 'free') {
+      setShowUpgradeModal(true);
+      setUpgradeReason('premium');
+      const v = videoRef.current;
+      if (v) v.pause();
+    }
+  }, [title?.isPremium, plan]);
 
   const fmt = (s: number) => {
     if (!isFinite(s)) return '0:00';
@@ -186,7 +230,7 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
       <video
         ref={videoRef}
         src={videoSrc}
-        autoPlay
+        autoPlay={!(title?.isPremium && plan === 'free')}
         playsInline
         className="absolute inset-0 w-full h-full object-contain"
         onClick={togglePlay}
@@ -442,6 +486,56 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
         onClick={(e) => { e.stopPropagation(); togglePlay(); pingControls(); }}
         aria-label="Toggle play"
       />
+
+      {/* Premium Upgrade Modal Overlay */}
+      <AnimatePresence>
+        {showUpgradeModal && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              className="bg-[#0e1017] border border-white/10 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl relative"
+            >
+              <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
+                <Crown className="text-amber-500" size={32} />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-white mb-2">
+                {upgradeReason === 'premium' ? '👑 Premium Exclusive' : '⏱️ Free Preview Ended'}
+              </h3>
+              <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                {upgradeReason === 'premium'
+                  ? `"${title?.title}" is a premium-only title. Upgrade to StreamVerse Premium or VIP plan to watch this movie and get unlimited ad-free access!`
+                  : `Your free 30-second preview of "${title?.title}" has ended. Upgrade to Premium or VIP to continue watching this title in 4K resolution!`}
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    if (document.fullscreenElement) {
+                      document.exitFullscreen?.();
+                    }
+                    navigate({ name: 'subscription' });
+                  }}
+                  className="w-full py-3 rounded-xl brand-gradient font-bold hover:scale-[1.02] transition-transform text-sm text-white flex items-center justify-center gap-1.5 shadow-[0_4px_20px_rgba(229,9,20,0.4)]"
+                >
+                  <Sparkles size={16} /> Upgrade to Premium
+                </button>
+                <button
+                  onClick={() => {
+                    if (document.fullscreenElement) {
+                      document.exitFullscreen?.();
+                    }
+                    back();
+                  }}
+                  className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 font-bold hover:scale-[1.02] transition-transform text-sm text-white/80"
+                >
+                  Go Back
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

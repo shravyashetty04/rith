@@ -70,6 +70,9 @@ export default function MovieCard({ title, size = 'default', rank, progress }: P
 
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1 z-20">
+            {title.isPremium && (
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500 text-black tracking-wider uppercase flex items-center gap-0.5 shadow-[0_2px_8px_rgba(245,158,11,0.5)]">⭐ PREMIUM</span>
+            )}
             {title.isComingSoon && (
               <span className="px-2 py-0.5 rounded text-[8px] font-black bg-red-600 text-white tracking-widest uppercase">COMING SOON</span>
             )}
