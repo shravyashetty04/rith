@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AppProvider, useApp } from './store';
 import Navbar from './components/Navbar';
 import Splash from './screens/Splash';
@@ -17,12 +18,74 @@ import SignupFlow from './screens/SignupFlow';
 
 function Router() {
   const { route, navigate, isAuthed } = useApp();
+  const [modalInfo, setModalInfo] = useState<{ title: string; content: string } | null>(null);
 
   useEffect(() => {
     if (isAuthed && route.name === 'profiles') {
       navigate({ name: 'home' });
     }
   }, [isAuthed, route.name, navigate]);
+
+  const handleFooterLink = (label: string) => {
+    switch (label.toLowerCase()) {
+      case 'account':
+      case 'help centre':
+      case 'faq':
+      case 'terms of use':
+      case 'privacy':
+      case 'legal notices':
+      case 'cookie preferences':
+        navigate({ name: 'settings' });
+        break;
+      case 'contact us':
+        setModalInfo({
+          title: 'Contact Us',
+          content: 'Support Hotline: 000-800-919-1743\nEmail Support: help@streamverse.com\nAddress: Residency Road, Bengaluru, India'
+        });
+        break;
+      case 'ways to watch':
+        setModalInfo({
+          title: 'Ways to Watch',
+          content: 'You can stream StreamVerse on Android, iOS, Apple TV, Fire TV, Chromecast, Samsung Smart TVs, and modern web browsers.'
+        });
+        break;
+      case 'only on streamverse':
+        setModalInfo({
+          title: 'Only on StreamVerse',
+          content: 'Browse our exclusive library of StreamVerse Originals, local live television channels, and curated international cinema.'
+        });
+        break;
+      case 'speed test':
+        window.open('https://www.speedtest.net', '_blank');
+        break;
+      case 'jobs':
+        setModalInfo({
+          title: 'Careers',
+          content: 'We are currently hiring Frontend Engineers, Streaming Infrastructure Specialists, and Content Curators. Send your resume to careers@streamverse.com!'
+        });
+        break;
+      case 'investor relations':
+        setModalInfo({
+          title: 'Investor Relations',
+          content: 'StreamVerse is a privately held streaming technology group. For institutional partnership proposals, please reach out to investors@streamverse.com.'
+        });
+        break;
+      case 'media centre':
+        setModalInfo({
+          title: 'Media Centre',
+          content: 'Access latest press releases, brand assets, and contact details for our public relations team at press@streamverse.com.'
+        });
+        break;
+      case 'corporate information':
+        setModalInfo({
+          title: 'Corporate Information',
+          content: 'StreamVerse Media Labs Private Limited\nBengaluru, Karnataka, India\nCIN: U72200KA2026PTC998877'
+        });
+        break;
+      default:
+        navigate({ name: 'home' });
+    }
+  };
 
   // If not authenticated, force onboarding (allow signup-flow too)
   if (!isAuthed && route.name !== 'onboarding' && route.name !== 'auth' && route.name !== 'splash' && route.name !== 'signup-flow') {
@@ -94,29 +157,29 @@ function Router() {
             Questions? Call <a href="tel:000-800-919-1743" className="hover:underline">000-800-919-1743</a>
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-8 mb-8">
-            <div className="flex flex-col gap-2.5">
-              <a href="#" className="hover:underline">FAQ</a>
-              <a href="#" className="hover:underline">Investor Relations</a>
-              <a href="#" className="hover:underline">Ways to Watch</a>
-              <a href="#" className="hover:underline">Corporate Information</a>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-8 mb-8 text-left">
+            <div className="flex flex-col gap-2.5 items-start">
+              <button onClick={() => handleFooterLink('FAQ')} className="hover:underline text-left">FAQ</button>
+              <button onClick={() => handleFooterLink('Investor Relations')} className="hover:underline text-left">Investor Relations</button>
+              <button onClick={() => handleFooterLink('Ways to Watch')} className="hover:underline text-left">Ways to Watch</button>
+              <button onClick={() => handleFooterLink('Corporate Information')} className="hover:underline text-left">Corporate Information</button>
             </div>
-            <div className="flex flex-col gap-2.5">
-              <a href="#" className="hover:underline">Help Centre</a>
-              <a href="#" className="hover:underline">Jobs</a>
-              <a href="#" className="hover:underline">Terms of Use</a>
-              <a href="#" className="hover:underline">Privacy</a>
+            <div className="flex flex-col gap-2.5 items-start">
+              <button onClick={() => handleFooterLink('Help Centre')} className="hover:underline text-left">Help Centre</button>
+              <button onClick={() => handleFooterLink('Jobs')} className="hover:underline text-left">Jobs</button>
+              <button onClick={() => handleFooterLink('Terms of Use')} className="hover:underline text-left">Terms of Use</button>
+              <button onClick={() => handleFooterLink('Privacy')} className="hover:underline text-left">Privacy</button>
             </div>
-            <div className="flex flex-col gap-2.5">
-              <a href="#" className="hover:underline">Account</a>
-              <a href="#" className="hover:underline">Media Centre</a>
-              <a href="#" className="hover:underline">Cookie Preferences</a>
-              <a href="#" className="hover:underline">Legal Notices</a>
+            <div className="flex flex-col gap-2.5 items-start">
+              <button onClick={() => handleFooterLink('Account')} className="hover:underline text-left">Account</button>
+              <button onClick={() => handleFooterLink('Media Centre')} className="hover:underline text-left">Media Centre</button>
+              <button onClick={() => handleFooterLink('Cookie Preferences')} className="hover:underline text-left">Cookie Preferences</button>
+              <button onClick={() => handleFooterLink('Legal Notices')} className="hover:underline text-left">Legal Notices</button>
             </div>
-            <div className="flex flex-col gap-2.5">
-              <a href="#" className="hover:underline">Contact Us</a>
-              <a href="#" className="hover:underline">Speed Test</a>
-              <a href="#" className="hover:underline">Only on StreamVerse</a>
+            <div className="flex flex-col gap-2.5 items-start">
+              <button onClick={() => handleFooterLink('Contact Us')} className="hover:underline text-left">Contact Us</button>
+              <button onClick={() => handleFooterLink('Speed Test')} className="hover:underline text-left">Speed Test</button>
+              <button onClick={() => handleFooterLink('Only on StreamVerse')} className="hover:underline text-left">Only on StreamVerse</button>
             </div>
           </div>
 
@@ -131,6 +194,30 @@ function Router() {
           </div>
         </div>
       </footer>
+
+      {/* Modern Overlay Info Modal for Footer Links */}
+      <AnimatePresence>
+        {modalInfo && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-[#0f111a] border border-white/10 p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl relative"
+            >
+              <h3 className="text-lg font-bold text-white mb-3">{modalInfo.title}</h3>
+              <p className="text-white/60 text-sm mb-6 leading-relaxed whitespace-pre-line">{modalInfo.content}</p>
+              <button
+                onClick={() => setModalInfo(null)}
+                className="w-full py-2.5 rounded-xl brand-gradient font-bold hover:scale-[1.02] transition-transform text-sm text-white"
+              >
+                Got it
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
