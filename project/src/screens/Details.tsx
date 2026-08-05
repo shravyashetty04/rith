@@ -5,12 +5,12 @@ import {
   Volume2, Calendar, Film, Globe, Users, Building2, ThumbsUp, MessageCircle,
 } from 'lucide-react';
 import { useApp } from '../store';
-import { getTitle, TITLES, byGenre } from '../data';
+import { getTitle, TITLES, byGenre, PLANS } from '../data';
 import ContentRow from '../components/ContentRow';
 
 export default function Details({ id }: { id: string }) {
-  const { navigate, back, favorites, toggleFavorite, watchlist, toggleWatchlist } = useApp();
-  const title = getTitle(id);
+  const { catalog, navigate, back, favorites, toggleFavorite, watchlist, toggleWatchlist, plan } = useApp();
+  const title = catalog.find((t) => t.id === id);
   const [season, setSeason] = useState(1);
   const [tab, setTab] = useState<'episodes' | 'more' | 'reviews'>('episodes');
   const [reviewText, setReviewText] = useState('');
@@ -23,13 +23,40 @@ export default function Details({ id }: { id: string }) {
 
   const isFav = favorites.includes(title.id);
   const inList = watchlist.includes(title.id);
-  const similar = byGenre(title.genres[0]).filter((t) => t.id !== title.id);
+  const similar = catalog.filter((t) => t.id !== title.id && t.genres?.includes(title.genres?.[0] || ''));
   const seasons = title.seasons ? Array.from({ length: title.seasons }, (_, i) => i + 1) : [];
 
   const addReview = () => {
     if (!reviewText.trim()) return;
     setReviews((r) => [{ user: 'You', avatar: '🧑', rating: 5, text: reviewText, time: 'just now' }, ...r]);
     setReviewText('');
+  };
+
+  const handleDownload = (e: React.MouseEvent, url: string, titleName: string, reqPlan?: string, isPremium?: boolean) => {
+    e.stopPropagation();
+    
+    // Check if user has access based on subscription tiers
+    let isDenied = false;
+    if (isPremium && (!plan || plan === 'free')) isDenied = true;
+    if (reqPlan && reqPlan !== 'free') {
+      const userPrice = plan === 'free' || !plan ? 0 : (PLANS.find(p => p.id === plan)?.price || 0);
+      const reqPrice = PLANS.find(p => p.id === reqPlan)?.price || Infinity;
+      if (userPrice < reqPrice) isDenied = true;
+    }
+    
+    if (isDenied) {
+      alert('You need a higher Premium subscription tier to download this content.');
+      navigate({ name: 'subscription' });
+      return;
+    }
+    
+    // Trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${titleName.replace(/\s+/g, '_')}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
@@ -108,7 +135,9 @@ export default function Details({ id }: { id: string }) {
                 <Star size={20} className={isFav ? 'fill-brand-500 text-brand-500' : ''} />
               </button>
               <button
+                onClick={(e) => handleDownload(e, title.videoUrl || '', title.title, title.requiredPlan, title.isPremium)}
                 className="w-11 h-11 rounded-full glass border border-white/30 flex items-center justify-center hover:scale-110 transition-transform"
+                title="Download"
               >
                 <Download size={20} />
               </button>
@@ -199,7 +228,16 @@ export default function Details({ id }: { id: string }) {
                           <h3 className="font-semibold">{ep.episode}. {ep.title}</h3>
                           <span className="text-xs text-white/50">{ep.duration}</span>
                         </div>
-                        <p className="text-sm text-white/60 mt-1 line-clamp-2">{ep.description}</p>
+                        <div className="flex justify-between items-end">
+                          <p className="text-sm text-white/60 mt-1 line-clamp-2 pr-4">{ep.description}</p>
+                          <button
+                            onClick={(e) => handleDownload(e, ep.videoUrl || '', ep.title, title.requiredPlan, title.isPremium)}
+                            className="w-8 h-8 rounded-full glass border border-white/20 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors z-10"
+                            title="Download Episode"
+                          >
+                            <Download size={14} />
+                          </button>
+                        </div>
                       </div>
                     </motion.button>
                   )) || (

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Phone, Apple, ChevronLeft, Check } from 'lucide-react';
 import { useApp, PROFILES } from '../store';
+import api from '../api';
 
 type Mode = 'login' | 'signup' | 'forgot';
 
@@ -13,19 +14,37 @@ export default function Auth({ mode }: { mode: Mode }) {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
-  const submit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [error, setError] = useState('');
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      if (m === 'forgot') {
+    setError('');
+
+    if (m === 'forgot') {
+      setTimeout(() => {
+        setLoading(false);
         setOtpSent(true);
-        return;
+      }, 900);
+      return;
+    }
+
+    try {
+      if (m === 'signup') {
+        await api.signUp(email, password, fullName);
+      } else {
+        await api.signIn(email, password);
       }
       setAuthed(true);
       setProfile(PROFILES[0]);
       navigate({ name: 'home' });
-    }, 900);
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed');
+      setLoading(false);
+    }
   };
 
   const titles: Record<Mode, { h: string; s: string }> = {
@@ -79,6 +98,12 @@ export default function Auth({ mode }: { mode: Mode }) {
             >
               <h1 className="text-3xl font-black tracking-tight">{titles[m].h}</h1>
               <p className="text-white/60 mt-1.5 text-sm">{titles[m].s}</p>
+              
+              {error && (
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg">
+                  {error}
+                </div>
+              )}
 
               {otpSent ? (
                 <div className="mt-7">
@@ -118,9 +143,9 @@ export default function Auth({ mode }: { mode: Mode }) {
               ) : (
                 <form onSubmit={submit} className="mt-7 space-y-4">
                   {m === 'signup' && (
-                    <Field label="Full name" type="text" placeholder="Alex Carter" icon={<Mail size={18} />} />
+                    <Field label="Full name" type="text" placeholder="Alex Carter" icon={<Mail size={18} />} value={fullName} onChange={(e) => setFullName(e.target.value)} />
                   )}
-                  <Field label="Email" type="email" placeholder="you@email.com" icon={<Mail size={18} />} />
+                  <Field label="Email" type="email" placeholder="you@email.com" icon={<Mail size={18} />} value={email} onChange={(e) => setEmail(e.target.value)} />
                   {m !== 'forgot' && (
                     <div className="relative">
                       <Field
@@ -128,6 +153,8 @@ export default function Auth({ mode }: { mode: Mode }) {
                         type={showPw ? 'text' : 'password'}
                         placeholder="••••••••"
                         icon={<Lock size={18} />}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                       <button
                         type="button"
@@ -233,7 +260,7 @@ export default function Auth({ mode }: { mode: Mode }) {
   );
 }
 
-function Field({ label, type, placeholder, icon }: { label: string; type: string; placeholder: string; icon: React.ReactNode }) {
+function Field({ label, type, placeholder, icon, value, onChange }: { label: string; type: string; placeholder: string; icon: React.ReactNode; value?: string; onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
   return (
     <label className="block">
       <span className="text-xs text-white/60 font-medium">{label}</span>
@@ -241,8 +268,11 @@ function Field({ label, type, placeholder, icon }: { label: string; type: string
         <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40">{icon}</span>
         <input
           type={type}
+          value={value}
+          onChange={onChange}
           placeholder={placeholder}
           className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/15 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all text-white placeholder:text-white/30"
+          required
         />
       </div>
     </label>

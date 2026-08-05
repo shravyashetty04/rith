@@ -5,7 +5,7 @@ import { useApp } from '../store';
 
 export default function Home() {
   const { continueWatching, catalog } = useApp();
-  const hero = catalog.find((t) => t.isFeatured) || catalog.find((t) => t.id === 't_katv') || catalog[0];
+  const hero = catalog.find((t) => t.id === 't_katv') || catalog.find((t) => t.isFeatured) || catalog[0];
 
   const continueTitles = continueWatching
     .map((item) => {
@@ -34,7 +34,7 @@ export default function Home() {
       <HeroBanner title={hero} />
 
       {/* Premium Cinematic Glowing Wave Divider */}
-      <div className="relative z-20 -mt-12 sm:-mt-16 lg:-mt-20 pointer-events-none w-full overflow-hidden select-none">
+      <div className="relative z-20 mt-2 sm:mt-4 pointer-events-none w-full overflow-hidden select-none">
         <svg
           className="w-full h-12 sm:h-16 lg:h-24 text-ink-975 filter drop-shadow-[0_-8px_20px_rgba(139,92,246,0.3)]"
           viewBox="0 0 1440 80"

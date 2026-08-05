@@ -7,9 +7,9 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useApp } from '../store';
-import { TITLES, PROFILES } from '../data';
+import { TITLES, PROFILES, PLANS } from '../data';
 import api from '../api';
-import type { Title } from '../types';
+import type { Title, ContentType } from '../types';
 
 type Tab = 'dashboard' | 'content' | 'users' | 'subs' | 'analytics' | 'cms' | 'settings';
 
@@ -227,8 +227,20 @@ function Dashboard() {
 }
 
 function Content({ setTab, onEdit }: { setTab: (t: Tab) => void; onEdit: (t: Title) => void }) {
-  const { catalog } = useApp();
+  const { catalog, setCatalog } = useApp();
   const [q, setQ] = useState('');
+  
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+    try {
+      await api.adminDeleteTitle(id);
+      setCatalog((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      console.error('Failed to delete title', err);
+      alert('Failed to delete title');
+    }
+  };
+
   const filtered = catalog.filter((t) => t.title.toLowerCase().includes(q.toLowerCase()));
   return (
     <div className="space-y-4 text-white">
@@ -281,12 +293,20 @@ function Content({ setTab, onEdit }: { setTab: (t: Tab) => void; onEdit: (t: Tit
                 <td className="p-4 hidden lg:table-cell">{(Math.random() * 5 + 0.5).toFixed(1)}M</td>
                 <td className="p-4"><span className="flex items-center gap-1 text-amber-400"><Star size={12} className="fill-amber-400" /> {t.imdb}</span></td>
                 <td className="p-4">
-                  <button
-                    onClick={() => onEdit(t)}
-                    className="px-3 py-1 bg-brand-500/20 hover:bg-brand-500 text-brand-400 hover:text-white text-xs font-bold rounded-lg border border-brand-500/30 transition-all active:scale-95"
-                  >
-                    Edit
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onEdit(t)}
+                      className="px-3 py-1 bg-brand-500/20 hover:bg-brand-500 text-brand-400 hover:text-white text-xs font-bold rounded-lg border border-brand-500/30 transition-all active:scale-95"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(t.id, t.title)}
+                      className="px-3 py-1 bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white text-xs font-bold rounded-lg border border-red-500/30 transition-all active:scale-95"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -298,13 +318,27 @@ function Content({ setTab, onEdit }: { setTab: (t: Tab) => void; onEdit: (t: Tit
 }
 
 function Users() {
-  const users = [
-    { name: 'Alex Carter', email: 'alex@email.com', plan: 'Premium', status: 'Active', joined: 'Jan 2024' },
-    { name: 'Jordan Lee', email: 'jordan@email.com', plan: 'VIP', status: 'Active', joined: 'Mar 2024' },
-    { name: 'Maya Rodriguez', email: 'maya@email.com', plan: 'Premium', status: 'Active', joined: 'Feb 2024' },
-    { name: 'Devon Kim', email: 'devon@email.com', plan: 'Free', status: 'Trial', joined: 'Jul 2026' },
-    { name: 'Aria Lopez', email: 'aria@email.com', plan: 'Premium', status: 'Cancelled', joined: 'Nov 2023' },
-  ];
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.adminListUsers().then((data) => {
+      setUsers(data);
+      setLoading(false);
+    }).catch((err) => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
+
+  const formatDate = (d: string) => {
+    if (!d) return 'Unknown';
+    const date = new Date(d);
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+
+  if (loading) return <div className="p-4 text-white/50">Loading users...</div>;
+
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-black">Users</h1>
@@ -320,25 +354,25 @@ function Users() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {users.map((u) => (
-              <tr key={u.email} className="hover:bg-white/5">
+              <tr key={u.email || u.id} className="hover:bg-white/5">
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg brand-gradient flex items-center justify-center font-bold text-sm">{u.name[0]}</div>
+                    <div className="w-9 h-9 rounded-lg brand-gradient flex items-center justify-center font-bold text-sm">{(u.name || u.email || 'U')[0].toUpperCase()}</div>
                     <div>
-                      <div className="font-medium">{u.name}</div>
+                      <div className="font-medium">{u.name || 'User'}</div>
                       <div className="text-xs text-white/40">{u.email}</div>
                     </div>
                   </div>
                 </td>
-                <td className="p-4 hidden sm:table-cell">{u.plan}</td>
+                <td className="p-4 hidden sm:table-cell">{u.plan || 'Free'}</td>
                 <td className="p-4">
                   <span className={`px-2 py-0.5 rounded-full text-xs ${
-                    u.status === 'Active' ? 'bg-green-500/20 text-green-400' :
-                    u.status === 'Trial' ? 'bg-blue-500/20 text-blue-400' :
+                    (u.status || 'Active') === 'Active' ? 'bg-green-500/20 text-green-400' :
+                    (u.status || 'Active') === 'Trial' ? 'bg-blue-500/20 text-blue-400' :
                     'bg-brand-500/20 text-brand-400'
-                  }`}>{u.status}</span>
+                  }`}>{u.status || 'Active'}</span>
                 </td>
-                <td className="p-4 hidden md:table-cell text-white/60">{u.joined}</td>
+                <td className="p-4 hidden md:table-cell text-white/60">{formatDate(u.created_at)}</td>
               </tr>
             ))}
           </tbody>
@@ -451,7 +485,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void; editingTitle: Title | null; clearEditing: () => void }) {
   const { refreshCatalog, catalog, setCatalog } = useApp();
   const [title, setTitle] = useState('');
-  const [type, setType] = useState<'movie' | 'series' | 'live'>('movie');
+  const [type, setType] = useState<ContentType>('movie');
   const [year, setYear] = useState('2024');
   const [ageRating, setAgeRating] = useState('U/A 16+');
   const [director, setDirector] = useState('');
@@ -467,6 +501,8 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
   const [isNewRelease, setIsNewRelease] = useState(false);
   const [isOriginal, setIsOriginal] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [isComingSoon, setIsComingSoon] = useState(false);
+  const [requiredPlan, setRequiredPlan] = useState('free');
   
   const [videoFileName, setVideoFileName] = useState('');
   const [customVideoUrl, setCustomVideoUrl] = useState('');
@@ -492,6 +528,8 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
     setIsNewRelease(false);
     setIsOriginal(false);
     setIsPremium(false);
+    setIsComingSoon(false);
+    setRequiredPlan('free');
     setVideoFileName('');
     setCustomVideoUrl('');
     setSuccess('');
@@ -501,7 +539,7 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
   useEffect(() => {
     if (editingTitle) {
       setTitle(editingTitle.title);
-      setType(editingTitle.type === 'series' || editingTitle.type === 'live' ? editingTitle.type : 'movie');
+      setType(editingTitle.type);
       setYear(String(editingTitle.year));
       setAgeRating(editingTitle.rating);
       setDirector(editingTitle.director || '');
@@ -517,6 +555,8 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
       setIsNewRelease(editingTitle.isNew || false);
       setIsOriginal(editingTitle.isOriginal || false);
       setIsPremium(editingTitle.isPremium || false);
+      setIsComingSoon(editingTitle.isComingSoon || false);
+      setRequiredPlan(editingTitle.requiredPlan || 'free');
       setCustomVideoUrl(editingTitle.videoUrl);
       setVideoFileName(editingTitle.videoUrl.startsWith('data:') ? 'Uploaded Base64 File' : editingTitle.videoUrl.split('/').pop() || '');
     } else {
@@ -576,8 +616,9 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
       isOriginal: isOriginal,
       trending: isTrending,
       isFeatured: isFeatured,
-      isPremium: isPremium,
-      isComingSoon: selectedGenres.includes('Coming Soon'),
+      isPremium: isPremium || requiredPlan !== 'free',
+      isComingSoon: isComingSoon,
+      requiredPlan: requiredPlan === 'free' ? undefined : requiredPlan,
     };
 
     try {
@@ -654,12 +695,31 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
         </button>
       </div>
 
-      {success && (
-        <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
-          <CheckCircle2 size={16} />
-          {success}
-        </div>
-      )}
+      <AnimatePresence>
+        {success && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setSuccess('')}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              className="bg-[#0f111a] border border-green-500/30 p-6 rounded-2xl max-w-sm w-full text-center shadow-2xl relative shadow-green-500/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 size={32} className="text-green-500" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Success!</h3>
+              <p className="text-white/70 text-sm mb-6">{success}</p>
+              <button
+                onClick={() => setSuccess('')}
+                className="w-full py-2.5 rounded-xl bg-green-500 hover:bg-green-600 font-bold text-white transition-colors shadow-lg shadow-green-500/20"
+              >
+                Awesome
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 glass rounded-2xl p-6">
@@ -671,12 +731,15 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
                 <label className="text-xs text-white/60">Type</label>
                 <select
                   value={type}
-                  onChange={(e) => setType(e.target.value as 'movie' | 'series' | 'live')}
+                  onChange={(e) => setType(e.target.value as ContentType)}
                   className="w-full mt-1 bg-white/5 border border-white/15 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 text-white"
                 >
                   <option value="movie" className="bg-[#12131a]">Movie</option>
                   <option value="series" className="bg-[#12131a]">Series</option>
                   <option value="live" className="bg-[#12131a]">Live Channel</option>
+                  <option value="original" className="bg-[#12131a]">Original</option>
+                  <option value="sport" className="bg-[#12131a]">Sport</option>
+                  <option value="kids" className="bg-[#12131a]">Kids</option>
                 </select>
               </div>
               <Input label="Year" placeholder="2024" value={year} onChange={(e) => setYear(e.target.value)} />
@@ -686,7 +749,7 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
               <div className="sm:col-span-2">
                 <label className="text-xs text-white/60">Categories / Genres</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1.5">
-                  {['Action', 'Comedy', 'Drama', 'Sci-Fi', 'Romance', 'Horror', 'Sports', 'Kids', 'Coming Soon'].map((g) => {
+                  {Array.from(new Set(catalog.flatMap((t) => t.genres))).sort().map((g) => {
                     const checked = selectedGenres.includes(g);
                     return (
                       <label key={g} className="flex items-center gap-2 text-xs text-white/80 cursor-pointer select-none bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors">
@@ -773,6 +836,7 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
                   { label: 'Show in Trending Now', checked: isTrending, onChange: setIsTrending },
                   { label: 'Show in New & Popular', checked: isNewRelease, onChange: setIsNewRelease },
                   { label: 'Show in Originals', checked: isOriginal, onChange: setIsOriginal },
+                  { label: 'Show in Coming Soon', checked: isComingSoon, onChange: setIsComingSoon },
                   { label: 'Premium Only Title', checked: isPremium, onChange: setIsPremium },
                 ].map((p) => (
                   <label key={p.label} className="flex items-center gap-2.5 text-xs text-white/80 cursor-pointer select-none bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-2.5 rounded-lg transition-all active:scale-[0.98]">
@@ -787,6 +851,24 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
                 ))}
               </div>
             </div>
+            
+            {/* Access & Subscription Control */}
+            <div className="border-t border-white/5 pt-3">
+              <label className="text-xs font-bold uppercase tracking-wider text-brand-400">Access / Required Subscription</label>
+              <div className="flex flex-wrap gap-3 mt-2">
+                <label className={`flex items-center gap-2 text-xs cursor-pointer select-none border px-4 py-2.5 rounded-lg transition-all ${requiredPlan === 'free' ? 'bg-brand-500/20 border-brand-500 text-brand-400 font-bold' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'}`}>
+                  <input type="radio" name="planLevel" checked={requiredPlan === 'free'} onChange={() => setRequiredPlan('free')} className="hidden" />
+                  Free (All Users)
+                </label>
+                {PLANS.map((p) => (
+                  <label key={p.id} className={`flex items-center gap-2 text-xs cursor-pointer select-none border px-4 py-2.5 rounded-lg transition-all ${requiredPlan === p.id ? 'bg-brand-500/20 border-brand-500 text-brand-400 font-bold' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'}`}>
+                    <input type="radio" name="planLevel" checked={requiredPlan === p.id} onChange={() => setRequiredPlan(p.id)} className="hidden" />
+                    {p.name} Tier
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <div>
               <label className="text-xs text-white/60">Description</label>
               <textarea
@@ -848,10 +930,10 @@ function CMS({ setTab, editingTitle, clearEditing }: { setTab: (t: Tab) => void;
               { icon: Film, label: 'Add Movie', action: () => { setType('movie'); setSelectedGenres(['Action', 'Drama']); } },
               { icon: Tv, label: 'Add Series', action: () => { setType('series'); setSelectedGenres(['Drama', 'Horror']); } },
               { icon: Radio, label: 'Add Live Channel', action: () => { setType('live'); setSelectedGenres(['Sports', 'Kids']); } },
-              { icon: Ticket, label: 'Create Coupon' },
-              { icon: Globe, label: 'Add Language' },
-              { icon: FileText, label: 'Add Subtitle' },
-              { icon: Shield, label: 'Manage Roles' },
+              { icon: Ticket, label: 'Create Coupon', action: () => alert('Coupons management module is coming soon!') },
+              { icon: Globe, label: 'Add Language', action: () => alert('Language packs module is coming soon!') },
+              { icon: FileText, label: 'Add Subtitle', action: () => alert('Subtitle upload module is coming soon!') },
+              { icon: Shield, label: 'Manage Roles', action: () => alert('Role management module is coming soon!') },
             ].map((a) => (
               <button
                 key={a.label}

@@ -90,12 +90,12 @@ export default function ContentRow({ title, titles, variant = 'default', onSeeAl
           ))}
         </div>
       ) : (
-        <div className="relative overflow-hidden px-1 pb-6 -mb-6">
+        <div className="relative pb-6 -mb-6 group/slider -mx-4 sm:-mx-6 lg:-mx-10">
           <div
             ref={scrollRef}
-            className={`flex overflow-x-auto no-scrollbar pb-6 pt-2 snap-x snap-mandatory ${
+            className={`flex overflow-x-auto no-scrollbar pb-6 pt-2 snap-x snap-mandatory px-4 sm:px-6 lg:px-10 ${
               variant === 'ranked'
-                ? 'gap-12 sm:gap-14 lg:gap-16 pl-8 sm:pl-10 lg:pl-12 pr-6'
+                ? 'gap-12 sm:gap-14 lg:gap-16 pl-12 sm:pl-16 lg:pl-20'
                 : 'gap-3 sm:gap-4'
             } ${isScrolling ? 'pointer-events-none' : ''}`}
           >
@@ -109,6 +109,24 @@ export default function ContentRow({ title, titles, variant = 'default', onSeeAl
               />
             ))}
           </div>
+
+          {/* Navigation Arrows */}
+          {canLeft && (
+            <div
+              className="absolute left-0 top-0 bottom-6 w-[4%] md:w-[3%] bg-black/50 opacity-0 group-hover/slider:opacity-100 flex items-center justify-center cursor-pointer transition-opacity z-30"
+              onClick={() => scroll(-1)}
+            >
+              <ChevronLeft className="w-8 h-8 text-white transition-transform hover:scale-125" />
+            </div>
+          )}
+          {canRight && (
+            <div
+              className="absolute right-0 top-0 bottom-6 w-[4%] md:w-[3%] bg-black/50 opacity-0 group-hover/slider:opacity-100 flex items-center justify-center cursor-pointer transition-opacity z-30"
+              onClick={() => scroll(1)}
+            >
+              <ChevronRight className="w-8 h-8 text-white transition-transform hover:scale-125" />
+            </div>
+          )}
         </div>
       )}
     </section>

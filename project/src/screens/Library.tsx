@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Heart, Play, Trash2, Clock, Download, Bell, Settings as SettingsIcon, ChevronLeft, Search, Star, Wifi, Pause, Check } from 'lucide-react';
+import { Heart, Play, Trash2, Clock, Download, Bell, Settings as SettingsIcon, ChevronLeft, Search, Star, Wifi, Pause, Check, User } from 'lucide-react';
 import { useApp } from '../store';
 import { getTitle, NOTIFICATIONS, WATCH_HISTORY, TITLES } from '../data';
 import { useState } from 'react';
@@ -169,7 +169,7 @@ export function Settings() {
   const [subs, setSubs] = useState(true);
   const [quality, setQuality] = useState('Auto');
   return (
-    <Shell title="Settings" icon={SettingsIcon}>
+    <Shell title="Account" icon={User}>
       <div className="space-y-6">
         <Group title="Playback">
           <Toggle label="Autoplay next episode" desc="Automatically play the next episode" value={autoplay} onChange={setAutoplay} />

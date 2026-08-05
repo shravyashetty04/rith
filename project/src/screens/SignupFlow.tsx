@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Crown, Lock, Smartphone, CreditCard, ChevronLeft, QrCode, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Check, Crown, Lock, Smartphone, CreditCard, ChevronLeft, QrCode, ShieldCheck, Sparkles, CheckCircle2, Apple, Wallet } from 'lucide-react';
 import { useApp, PROFILES } from '../store';
 import { PLANS } from '../data';
 import api from '../api';
@@ -12,7 +12,7 @@ export default function SignupFlow({ email: prefilledEmail }: { email?: string }
   const [cycle, setCycle] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [email, setEmail] = useState(prefilledEmail || '');
   const [password, setPassword] = useState('');
-  const [payMethod, setPayMethod] = useState<'card' | 'upi'>('card');
+  const [payMethod, setPayMethod] = useState<'card' | 'upi' | 'apple' | 'google'>('card');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -313,29 +313,27 @@ export default function SignupFlow({ email: prefilledEmail }: { email?: string }
                   </div>
 
                   {/* Payment Switch */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <button
-                      onClick={() => setPayMethod('card')}
-                      className={`flex items-center justify-center gap-2.5 p-4 rounded-xl border-2 transition-all ${
-                        payMethod === 'card'
-                          ? 'border-brand-500 bg-brand-500/5 font-bold text-white'
-                          : 'border-white/10 hover:border-white/20 text-white/60 hover:text-white'
-                      }`}
-                    >
-                      <CreditCard size={18} />
-                      <span className="text-sm">Credit / Debit Card</span>
-                    </button>
-                    <button
-                      onClick={() => setPayMethod('upi')}
-                      className={`flex items-center justify-center gap-2.5 p-4 rounded-xl border-2 transition-all ${
-                        payMethod === 'upi'
-                          ? 'border-brand-500 bg-brand-500/5 font-bold text-white'
-                          : 'border-white/10 hover:border-white/20 text-white/60 hover:text-white'
-                      }`}
-                    >
-                      <Smartphone size={18} />
-                      <span className="text-sm">UPI Payment (QR Code)</span>
-                    </button>
+                  <div className="grid grid-cols-4 gap-2 mb-6">
+                    {[
+                      { id: 'card', label: 'Card', icon: CreditCard },
+                      { id: 'upi', label: 'UPI', icon: Smartphone },
+                      { id: 'apple', label: 'Apple Pay', icon: Apple },
+                      { id: 'google', label: 'GPay', icon: Wallet },
+                    ].map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setPayMethod(m.id as any)}
+                        className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold ${
+                          payMethod === m.id
+                            ? 'border-brand-500 bg-brand-500/10 text-white'
+                            : 'border-white/10 hover:border-white/20 text-white/60 hover:text-white'
+                        }`}
+                      >
+                        <m.icon size={16} />
+                        <span className="truncate">{m.label}</span>
+                      </button>
+                    ))}
                   </div>
 
                   {/* Payment Form Interface */}

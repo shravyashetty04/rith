@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Bell, Menu, X, ChevronDown, User, Settings, LogOut, Shield, Download, Heart, Clock, Home as HomeIcon, Tv, Baby, Crown } from 'lucide-react';
+import { Search, Bell, Menu, X, ChevronDown, User, Settings, LogOut, Shield, Download, Heart, Clock, Home as HomeIcon, Tv, Baby, Crown, HelpCircle } from 'lucide-react';
 import { useApp } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,9 +29,14 @@ export default function Navbar() {
       { label: 'All Categories', action: () => navigate({ name: 'home' }) },
       { label: 'Trending Now', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-trending')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
       { label: 'New & Popular', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-latest')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
+      { label: 'Coming Soon', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-coming-soon')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
+      { label: 'Action & Adventure', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-action')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
+      { label: 'Sci-Fi & Fantasy', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-scifi')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
+      { label: 'Comedy Hits', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-comedy')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
+      { label: 'Romantic & Love', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-romantic')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
+      { label: 'Horror & Thrillers', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-horror')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
       { label: 'Originals', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-originals')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
       { label: 'Top Rated', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-toprated')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
-      { label: 'Romantic & Love', action: () => { navigate({ name: 'home' }); setTimeout(() => document.getElementById('row-romantic')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } },
     ],
     'Live TV': [
       { label: 'All Channels', action: () => navigate({ name: 'live' }) },
@@ -79,15 +84,25 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-1 ml-4">
-          {links.map((l) => {
+          {links.map((l, index) => {
             const active = current === l.route.name || (l.label === 'My List' && current === 'favorites');
             const items = subMenus[l.label];
+
+            // 4 Plan Colors: Gold, Emerald, Royal Blue, Purple
+            const colors = [
+              { hover: 'hover:text-amber-400', underline: 'bg-amber-500' },
+              { hover: 'hover:text-emerald-400', underline: 'bg-emerald-500' },
+              { hover: 'hover:text-blue-400', underline: 'bg-blue-500' },
+              { hover: 'hover:text-purple-400', underline: 'bg-purple-500' },
+            ];
+            const themeColor = colors[index % 4];
+
             return (
               <div key={l.label} className="relative group py-2">
                 <button
                   onClick={() => navigate(l.route)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative flex items-center gap-1 ${
-                    active ? 'text-white font-bold' : 'text-white/70 hover:text-white'
+                    active ? 'text-white font-bold' : `text-white/70 ${themeColor.hover}`
                   }`}
                 >
                   {l.label}
@@ -95,7 +110,7 @@ export default function Navbar() {
                   {active && (
                     <motion.div
                       layoutId="nav-underline"
-                      className="absolute bottom-0 left-4 right-4 h-0.5 bg-brand-500 rounded-full"
+                      className={`absolute bottom-0 left-4 right-4 h-0.5 ${themeColor.underline} rounded-full`}
                     />
                   )}
                 </button>
@@ -187,7 +202,8 @@ export default function Navbar() {
                         { label: 'Watch History', icon: Clock, action: () => navigate({ name: 'history' }) },
                         { label: 'My Favorites', icon: Heart, action: () => navigate({ name: 'favorites' }) },
                         { label: 'Downloads', icon: Download, action: () => navigate({ name: 'downloads' }) },
-                        { label: 'Settings', icon: Settings, action: () => navigate({ name: 'settings' }) },
+                        { label: 'Help & FAQ', icon: HelpCircle, action: () => navigate({ name: 'faq' }) },
+                        { label: 'Account', icon: User, action: () => navigate({ name: 'settings' }) },
                         { label: 'Admin Panel', icon: Shield, action: () => navigate({ name: 'admin' }) },
                       ].map((item) => (
                         <button

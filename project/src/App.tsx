@@ -15,6 +15,8 @@ import { Favorites, History, Downloads, Notifications, Settings } from './screen
 import { Live, Kids } from './screens/LiveKids';
 import Admin from './screens/Admin';
 import SignupFlow from './screens/SignupFlow';
+import Faq from './screens/Faq';
+import Terms from './screens/Terms';
 
 function Router() {
   const { route, navigate, isAuthed } = useApp();
@@ -28,13 +30,17 @@ function Router() {
 
   const handleFooterLink = (label: string) => {
     switch (label.toLowerCase()) {
-      case 'account':
-      case 'help centre':
       case 'faq':
+      case 'help centre':
+        navigate({ name: 'faq' });
+        break;
       case 'terms of use':
       case 'privacy':
       case 'legal notices':
       case 'cookie preferences':
+        navigate({ name: 'terms' });
+        break;
+      case 'account':
         navigate({ name: 'settings' });
         break;
       case 'contact us':
@@ -116,6 +122,8 @@ function Router() {
       {route.name === 'settings' && <Settings />}
       {route.name === 'live' && <Live />}
       {route.name === 'kids' && <Kids />}
+      {route.name === 'faq' && <Faq />}
+      {route.name === 'terms' && <Terms />}
 
       <footer className="page-shell border-t border-white/10 pt-6 pb-12 mt-4 sm:pt-8 sm:pb-16 sm:mt-6 text-left">
         {/* Email registration segment */}
@@ -158,28 +166,35 @@ function Router() {
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-8 mb-8 text-left">
+            {/* Column 1 */}
             <div className="flex flex-col gap-2.5 items-start">
-              <button onClick={() => handleFooterLink('FAQ')} className="hover:underline text-left">FAQ</button>
-              <button onClick={() => handleFooterLink('Investor Relations')} className="hover:underline text-left">Investor Relations</button>
-              <button onClick={() => handleFooterLink('Ways to Watch')} className="hover:underline text-left">Ways to Watch</button>
-              <button onClick={() => handleFooterLink('Corporate Information')} className="hover:underline text-left">Corporate Information</button>
+              <button onClick={() => handleFooterLink('FAQ')} className="hover:underline transition-colors text-left">FAQ</button>
+              <button onClick={() => handleFooterLink('Investor Relations')} className="hover:underline transition-colors text-left">Investor Relations</button>
+              <button onClick={() => handleFooterLink('Ways to Watch')} className="hover:underline transition-colors text-left">Ways to Watch</button>
+              <button onClick={() => handleFooterLink('Corporate Information')} className="hover:underline transition-colors text-left">Corporate Information</button>
             </div>
+
+            {/* Column 2 */}
             <div className="flex flex-col gap-2.5 items-start">
-              <button onClick={() => handleFooterLink('Help Centre')} className="hover:underline text-left">Help Centre</button>
-              <button onClick={() => handleFooterLink('Jobs')} className="hover:underline text-left">Jobs</button>
-              <button onClick={() => handleFooterLink('Terms of Use')} className="hover:underline text-left">Terms of Use</button>
-              <button onClick={() => handleFooterLink('Privacy')} className="hover:underline text-left">Privacy</button>
+              <button onClick={() => handleFooterLink('Help Centre')} className="hover:underline transition-colors text-left">Help Centre</button>
+              <button onClick={() => handleFooterLink('Jobs')} className="hover:underline transition-colors text-left">Jobs</button>
+              <button onClick={() => handleFooterLink('Terms of Use')} className="hover:underline transition-colors text-left">Terms of Use</button>
+              <button onClick={() => handleFooterLink('Privacy')} className="hover:underline transition-colors text-left">Privacy</button>
             </div>
+
+            {/* Column 3 */}
             <div className="flex flex-col gap-2.5 items-start">
-              <button onClick={() => handleFooterLink('Account')} className="hover:underline text-left">Account</button>
-              <button onClick={() => handleFooterLink('Media Centre')} className="hover:underline text-left">Media Centre</button>
-              <button onClick={() => handleFooterLink('Cookie Preferences')} className="hover:underline text-left">Cookie Preferences</button>
-              <button onClick={() => handleFooterLink('Legal Notices')} className="hover:underline text-left">Legal Notices</button>
+              <button onClick={() => handleFooterLink('Account')} className="hover:underline transition-colors text-left">Account</button>
+              <button onClick={() => handleFooterLink('Media Centre')} className="hover:underline transition-colors text-left">Media Centre</button>
+              <button onClick={() => handleFooterLink('Cookie Preferences')} className="hover:underline transition-colors text-left">Cookie Preferences</button>
+              <button onClick={() => handleFooterLink('Legal Notices')} className="hover:underline transition-colors text-left">Legal Notices</button>
             </div>
+
+            {/* Column 4 */}
             <div className="flex flex-col gap-2.5 items-start">
-              <button onClick={() => handleFooterLink('Contact Us')} className="hover:underline text-left">Contact Us</button>
-              <button onClick={() => handleFooterLink('Speed Test')} className="hover:underline text-left">Speed Test</button>
-              <button onClick={() => handleFooterLink('Only on StreamVerse')} className="hover:underline text-left">Only on StreamVerse</button>
+              <button onClick={() => handleFooterLink('Contact Us')} className="hover:underline transition-colors text-left">Contact Us</button>
+              <button onClick={() => handleFooterLink('Speed Test')} className="hover:underline transition-colors text-left">Speed Test</button>
+              <button onClick={() => handleFooterLink('Only on StreamVerse')} className="hover:underline transition-colors text-left">Only on StreamVerse</button>
             </div>
           </div>
 

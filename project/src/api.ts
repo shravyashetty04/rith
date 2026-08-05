@@ -27,9 +27,7 @@ export const supabase: SupabaseClient = isConfigured
       }
     }) as any);
 
-const host = typeof window !== 'undefined'
-  ? (window.location.hostname.includes('loca.lt') || window.location.hostname.includes('localhost') ? '192.168.0.104' : window.location.hostname)
-  : 'localhost';
+const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
 const LOCAL_API_URL = `http://${host}:3001/api`;
 
 async function localFetch(endpoint: string, options?: RequestInit) {
@@ -548,17 +546,21 @@ export const api = {
       const { error } = await supabase.from('titles').delete().eq('id', id);
       if (error) throw error;
     } else {
-      await fetch(`http://localhost:3001/api/admin/titles/${id}`, { method: 'DELETE' });
+      await localFetch(`/admin/titles/${id}`, { method: 'DELETE' });
     }
   },
 
   async adminListUsers() {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, name, email, plan, status, created_at')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data ?? [];
+    if (isConfigured) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, name, email, plan, status, created_at')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    } else {
+      return await localFetch('/admin/users');
+    }
   },
 };
 

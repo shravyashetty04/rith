@@ -2,6 +2,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -89,7 +90,7 @@ const server = http.createServer((req, res) => {
       const newUser = {
         id: 'u_' + Math.random().toString(36).substring(2, 9),
         email,
-        password, // In production, hash passwords!
+        password: crypto.createHash('sha256').update(password).digest('hex'),
         fullName: fullName || 'Subscriber',
         createdAt: new Date().toISOString()
       };
@@ -112,8 +113,9 @@ const server = http.createServer((req, res) => {
       }
 
       const db = readDB();
+      const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
       const user = db.users.find(
-        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === hashedPassword
       );
 
       if (!user) {
@@ -241,6 +243,22 @@ const server = http.createServer((req, res) => {
       return;
     }
 
+    // GET /api/admin/users
+    if (req.method === 'GET' && pathname === '/api/admin/users') {
+      const db = readDB();
+      const safeUsers = db.users.map(u => ({
+        id: u.id,
+        name: u.fullName,
+        email: u.email,
+        plan: 'Free',
+        status: 'Active',
+        created_at: u.createdAt
+      }));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(safeUsers));
+      return;
+    }
+
     // GET /api/admin/titles
     if (req.method === 'GET' && pathname === '/api/admin/titles') {
       const db = readDB();
@@ -288,6 +306,18 @@ const server = http.createServer((req, res) => {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('Title not found');
       }
+      return;
+    }
+
+    // DELETE /api/admin/titles/:id
+    if (req.method === 'DELETE' && pathname.startsWith('/api/admin/titles/')) {
+      const id = pathname.substring('/api/admin/titles/'.length);
+      const db = readDB();
+      if (!db.titles) db.titles = [];
+      db.titles = db.titles.filter((t) => t.id !== id);
+      writeDB(db);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true }));
       return;
     }
 

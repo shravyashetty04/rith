@@ -22,7 +22,7 @@ export default function MovieCard({ title, size = 'default', rank, progress }: P
 
   return (
     <div
-      className={`relative shrink-0 ${w} ${ar} cursor-pointer group z-10`}
+      className={`relative shrink-0 ${w} ${ar} cursor-pointer group ${hovered ? 'z-50' : 'z-10'}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => navigate({ name: 'details', id: title.id })}

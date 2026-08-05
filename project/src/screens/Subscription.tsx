@@ -5,6 +5,7 @@ import {
   Laptop, Download, Lock, HelpCircle, Tv, ShieldCheck, Ticket
 } from 'lucide-react';
 import { useApp } from '../store';
+import api from '../api';
 
 const PLANS_DATA = [
   {
@@ -143,16 +144,46 @@ export default function Subscription() {
     setSelectedPlan(planObj);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     setLoading(true);
-    setTimeout(() => {
+    
+    try {
+      const session = await api.getSession();
+      const userId = session?.user?.id;
+      const amount = selectedPlan?.price || 499;
+
+      if (userId) {
+        // Store in backend
+        await api.createSubscription(userId, selectedPlan.id, payMethod);
+        await api.recordPayment(userId, amount, 'INR', payMethod);
+      } else {
+        // Fallback for local simulation mode, but still save to local backend DB
+        const userObj = JSON.parse(localStorage.getItem('simulated_user') || '{}');
+        const localUserId = userObj.id || 'u_local_guest';
+        await api.createSubscription(localUserId, selectedPlan.id, payMethod);
+        await api.recordPayment(localUserId, amount, 'INR', payMethod);
+        
+        localStorage.setItem('simulated_subscription', JSON.stringify({
+          ...userObj,
+          plan: selectedPlan.id,
+          status: 'active',
+          paymentMethod: payMethod,
+          paidAmount: amount,
+          createdAt: new Date().toISOString()
+        }));
+      }
+
       setLoading(false);
       setDone(true);
-      setPlan('premium'); // Promotes state to premium to unlock all content
-      setTimeout(() => {
-        navigate({ name: 'home' });
-      }, 1600);
-    }, 2000);
+      setPlan('premium');
+      setTimeout(() => navigate({ name: 'home' }), 1600);
+    } catch (err) {
+      console.warn('Failed to save to backend, simulating locally.', err);
+      setLoading(false);
+      setDone(true);
+      setPlan('premium');
+      setTimeout(() => navigate({ name: 'home' }), 1600);
+    }
   };
 
   if (done) {
@@ -219,20 +250,20 @@ export default function Subscription() {
         </div>
 
         {/* Plan Cards 4-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 max-w-7xl mx-auto mb-8 px-2 sm:px-4">
           {PLANS_DATA.map((p) => (
             <div
               key={p.id}
               className={`relative ${p.cardBg} border ${p.borderColor} transition-all duration-300 rounded-2xl h-[520px] overflow-hidden row-shadow flex`}
             >
               {/* Solid divider line separating dark content area (left) and solid colored ticket stub (right) */}
-              <div className="absolute right-9 top-0 bottom-0 border-r border-white/10 z-10 pointer-events-none" />
+              <div className="absolute right-8 top-0 bottom-0 border-r border-white/10 z-10 pointer-events-none" />
 
               {/* Notch Cutout 1: Outer Left Border Cutout */}
               <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full -left-2.5 top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
               
               {/* Notch Cutout 2: Divider Line Cutout */}
-              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full right-[26px] top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
+              <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full right-[23px] top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
               
               {/* Notch Cutout 3: Outer Right Border Cutout (cuts into colored stub right border) */}
               <div className="absolute w-5 h-5 bg-[#000000] border border-white/10 rounded-full -right-2.5 top-[340px] -translate-y-1/2 z-20 pointer-events-none" />
@@ -241,13 +272,13 @@ export default function Subscription() {
               <div className="absolute left-0 right-0 top-[340px] border-t border-dashed border-white/15 pointer-events-none z-20" />
               
               {/* Right Solid Colored Ticket Stub Accent Strip */}
-              <div className={`absolute right-0 top-0 bottom-0 w-9 ${p.stubBg} flex flex-col items-center justify-between py-6 select-none z-10 rounded-r-2xl`}>
+              <div className={`absolute right-0 top-0 bottom-0 w-8 ${p.stubBg} flex flex-col items-center justify-between py-6 select-none z-10 rounded-r-2xl`}>
                 {/* Barcode top */}
                 <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30`}>
-                  <div className="w-5 h-[1px] bg-current" />
-                  <div className="w-5 h-[3px] bg-current" />
-                  <div className="w-5 h-[1px] bg-current" />
-                  <div className="w-5 h-[2px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
+                  <div className="w-4 h-[3px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
+                  <div className="w-4 h-[2px] bg-current" />
                 </div>
                 {/* Admit Text (Rotated counter-clockwise so A is at the bottom, E is at the top) */}
                 <span className={`text-[8.5px] font-black tracking-[0.25em] ${p.stubText} uppercase whitespace-nowrap -rotate-90 my-auto`}>
@@ -255,15 +286,15 @@ export default function Subscription() {
                 </span>
                 {/* Barcode bottom */}
                 <div className={`flex flex-col gap-0.5 ${p.stubText} opacity-30`}>
-                  <div className="w-5 h-[3px] bg-current" />
-                  <div className="w-5 h-[1px] bg-current" />
-                  <div className="w-5 h-[2px] bg-current" />
-                  <div className="w-5 h-[1px] bg-current" />
+                  <div className="w-4 h-[3px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
+                  <div className="w-4 h-[2px] bg-current" />
+                  <div className="w-4 h-[1px] bg-current" />
                 </div>
               </div>
 
               {/* Left Main Contents Area (occupies width minus the right ticket strip) */}
-              <div className="w-[calc(100%-36px)] h-full p-5 pr-4 flex flex-col justify-between">
+              <div className="w-[calc(100%-32px)] h-full p-4 sm:p-5 pr-3 flex flex-col justify-between">
                 {/* Top contents container (ends above horizontal perforation) */}
                 <div className="h-[320px] flex flex-col justify-between">
                   <div>
@@ -277,27 +308,27 @@ export default function Subscription() {
                     </div>
 
                     {/* Plan Name & Ad Free bubble */}
-                    <div className="flex items-center gap-1.5 mb-1.5">
+                    <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
                       {p.subBadge && (
-                        <span className="px-1.5 py-0.5 text-[8.5px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5 flex items-center gap-1">
+                        <span className="px-1.5 py-0.5 text-[8px] sm:text-[8.5px] font-black tracking-wide text-emerald-400 border border-emerald-500/20 rounded bg-emerald-500/5 flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {p.subBadge}
                         </span>
                       )}
-                      <h3 className="text-xl font-bold tracking-tight text-white">{p.name}</h3>
+                      <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">{p.name}</h3>
                     </div>
 
                     {/* Subtitle taglines capsules */}
-                    <div className="inline-block bg-white/5 border border-white/10 rounded-full px-2.5 py-0.5 text-[8.5px] font-bold text-white/50 tracking-wider uppercase mb-4 max-w-full truncate">
+                    <div className="inline-block bg-white/5 border border-white/10 rounded-full px-2.5 py-1 text-[8px] sm:text-[8.5px] font-bold text-white/50 tracking-wider uppercase mb-3 max-w-full leading-tight whitespace-normal break-words">
                       {p.tagline}
                     </div>
 
                     {/* Benefit text */}
-                    <div className={`text-[10px] font-bold tracking-wide uppercase leading-relaxed ${p.benefitColor} mb-3`}>
+                    <div className={`text-[9.5px] sm:text-[10px] font-bold tracking-wide uppercase leading-relaxed ${p.benefitColor} mb-3`}>
                       {p.benefit}
                     </div>
 
                     {/* Description details list */}
-                    <div className="text-[10px] text-white/60 leading-normal space-y-0.5">
+                    <div className="text-[9.5px] sm:text-[10px] text-white/60 leading-normal space-y-0.5">
                       {p.description.map((line, idx) => (
                         <div key={idx}>{line}</div>
                       ))}
@@ -309,7 +340,7 @@ export default function Subscription() {
                 <div className="h-[145px] flex flex-col justify-between">
                   <div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-white">INR {p.price}</span>
+                      <span className="text-2xl sm:text-3xl font-black text-white">INR {p.price}</span>
                     </div>
                     
                     <div className="text-white/40 text-[9px] font-black tracking-widest uppercase mt-0.5">
@@ -486,24 +517,24 @@ export default function Subscription() {
               <p className="text-white/60 text-xs mb-6">Select your payment method to complete subscription</p>
 
               {/* Payment Methods */}
-              <div className="grid grid-cols-2 gap-2 mb-6">
+              <div className="grid grid-cols-4 gap-2 mb-6">
                 {[
                   { id: 'card', label: 'Card', icon: CreditCard },
                   { id: 'upi', label: 'UPI', icon: Smartphone },
                   { id: 'apple', label: 'Apple Pay', icon: Apple },
-                  { id: 'google', label: 'Google Pay', icon: Wallet },
+                  { id: 'google', label: 'GPay', icon: Wallet },
                 ].map((m) => (
                   <button
                     key={m.id}
                     onClick={() => setPayMethod(m.id as any)}
-                    className={`flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-bold transition-all ${
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 p-2.5 sm:p-3 rounded-xl border text-[11px] sm:text-xs font-bold transition-all ${
                       payMethod === m.id
                         ? 'border-amber-500 bg-amber-500/10 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
                         : 'border-white/10 hover:bg-white/5 text-white/70'
                     }`}
                   >
-                    <m.icon size={16} />
-                    <span>{m.label}</span>
+                    <m.icon size={15} />
+                    <span className="truncate">{m.label}</span>
                   </button>
                 ))}
               </div>

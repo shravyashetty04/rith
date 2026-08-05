@@ -21,6 +21,8 @@ export type Route =
   | { name: 'live' }
   | { name: 'kids' }
   | { name: 'signup-flow'; email?: string }
+  | { name: 'faq' }
+  | { name: 'terms' }
   | { name: 'admin' };
 
 interface AppState {
@@ -61,7 +63,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isAuthed, setAuthed] = useState(false);
   const [plan, setPlan] = useState<string>('free');
   const [catalogVersion, setCatalogVersion] = useState(0);
-  const [catalog, setCatalog] = useState<Title[]>(TITLES);
+  const [catalog, setCatalog] = useState<Title[]>(
+    TITLES.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id || t.title.toLowerCase() === item.title.toLowerCase()))
+  );
 
   const refreshCatalog = useCallback(() => {
     setCatalogVersion((v) => v + 1);
@@ -92,7 +96,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 merged.unshift(ct);
               }
             });
-            return merged;
+            // Ensure absolute uniqueness by ID and Title
+            const unique = merged.filter((item, index, self) => 
+              index === self.findIndex((t) => t.id === item.id || t.title.toLowerCase() === item.title.toLowerCase())
+            );
+            return unique;
           });
           refreshCatalog();
         }
@@ -103,12 +111,62 @@ export function AppProvider({ children }: { children: ReactNode }) {
     checkAuthAndCatalog();
   }, [refreshCatalog]);
 
+  // Handle browser back button (popstate)
+  useEffect(() => {
+    try {
+      window.history.replaceState({ stackIndex: 0 }, '');
+    } catch (e) {
+      // ignore
+    }
+
+    const handlePopState = () => {
+      setStack((s) => {
+        if (s.length > 1) {
+          return s.slice(0, -1);
+        }
+        const current = s[s.length - 1];
+        if (current?.name !== 'home' && current?.name !== 'splash' && current?.name !== 'onboarding') {
+          return [{ name: 'home' }];
+        }
+        return s;
+      });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const route = stack[stack.length - 1];
   const navigate = useCallback((r: Route) => {
-    setStack((s) => [...s, r]);
+    setStack((s) => {
+      const next = [...s, r];
+      try {
+        window.history.pushState({ stackIndex: next.length - 1 }, '');
+      } catch (e) {
+        // ignore
+      }
+      return next;
+    });
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
-  const back = useCallback(() => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s)), []);
+
+  const back = useCallback(() => {
+    setStack((s) => {
+      if (s.length > 1) {
+        try {
+          window.history.back();
+        } catch (e) {
+          // ignore
+        }
+        return s.slice(0, -1);
+      }
+      const current = s[s.length - 1];
+      if (current?.name !== 'home' && current?.name !== 'splash' && current?.name !== 'onboarding') {
+        return [{ name: 'home' }];
+      }
+      return s;
+    });
+  }, []);
 
   const setProfile = useCallback((p: Profile | null) => setProfileState(p), []);
   const toggleFavorite = useCallback((id: string) => {

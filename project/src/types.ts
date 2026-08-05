@@ -27,6 +27,7 @@ export interface Title {
   isNew?: boolean;
   isComingSoon?: boolean;
   isFeatured?: boolean;
+  requiredPlan?: string; // e.g., 'free', 'premium', 'gold', 'vip'
   tags?: string[];
   isPremium?: boolean;
   videoUrl: string;

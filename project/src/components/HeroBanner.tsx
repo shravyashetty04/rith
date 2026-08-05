@@ -11,22 +11,30 @@ export default function HeroBanner({ title }: { title: Title }) {
   const inList = watchlist.includes(title.id);
   const isFav = favorites.includes(title.id);
 
+  useEffect(() => {
+    setShowVideo(false);
+    const t = setTimeout(() => setShowVideo(true), 2500);
+    return () => clearTimeout(t);
+  }, [title]);
+
   const isKaTV = title.id === 't_katv';
 
   if (isKaTV) {
     return (
       <section 
         onClick={() => navigate({ name: 'player', id: title.id })}
-        className="relative h-[88vh] min-h-[560px] w-full overflow-hidden cursor-pointer group"
+        className="relative w-full overflow-hidden cursor-pointer group bg-black pt-16 sm:pt-20"
       >
-        <img
-          src={title.backdrop}
-          alt={title.title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01]"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=1200';
-          }}
-        />
+        <div className="relative w-full overflow-hidden h-[50vh] sm:h-[70vh] lg:h-[85vh]">
+          <img
+            src={title.backdrop}
+            alt={title.title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02]"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=1200';
+            }}
+          />
+        </div>
       </section>
     );
   }
@@ -38,13 +46,23 @@ export default function HeroBanner({ title }: { title: Title }) {
         <img
           src={title.backdrop}
           alt={title.title}
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${showVideo && (title.trailerUrl || title.videoUrl) ? 'opacity-0' : 'opacity-100'}`}
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=1200';
           }}
         />
-        <div className="absolute inset-0 bg-hero-fade" />
-        <div className="absolute inset-0 bg-hero-left" />
+        {(title.trailerUrl || title.videoUrl) && (
+          <video
+            src={title.trailerUrl || title.videoUrl}
+            autoPlay
+            loop
+            muted={muted}
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${showVideo ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
+        <div className="absolute inset-0 bg-hero-fade pointer-events-none" />
+        <div className="absolute inset-0 bg-hero-left pointer-events-none" />
       </div>
 
       {/* Content */}
@@ -126,10 +144,19 @@ export default function HeroBanner({ title }: { title: Title }) {
         </AnimatePresence>
       </div>
 
-      {/* Rating chip */}
-      <div className="absolute right-4 sm:right-6 lg:right-10 bottom-28 flex items-center gap-3">
-        <div className="glass border-l-2 border-white pl-3 pr-4 py-1.5 rounded-r-lg">
-          <span className="text-sm font-semibold">{title.rating}</span>
+      {/* Rating chip and Mute Toggle */}
+      <div className="absolute right-0 bottom-[30%] flex items-center gap-3">
+        {(title.trailerUrl || title.videoUrl) && (
+          <button
+            onClick={() => setMuted(!muted)}
+            className="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center bg-black/30 hover:bg-black/60 transition-all text-white backdrop-blur-md"
+            aria-label={muted ? 'Unmute' : 'Mute'}
+          >
+            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
+        )}
+        <div className="glass border-l-4 border-white pl-3 pr-8 py-1.5 rounded-l-lg opacity-80 flex items-center text-white">
+          <span className="text-sm font-semibold">{title.rating || 'U/A 16+'}</span>
         </div>
       </div>
     </section>

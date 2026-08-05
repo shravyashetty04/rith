@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../store';
-import { getTitle } from '../data';
+import { getTitle, PLANS } from '../data';
 
 type Quality = 'Auto' | '4K' | '1080p' | '720p' | '480p';
 type Speed = 0.5 | 0.75 | 1 | 1.25 | 1.5 | 2;
@@ -17,8 +17,8 @@ const SUBS = ['Off', 'English', 'Spanish', 'Hindi', 'Japanese', 'French'];
 const AUDIOS = ['English', 'Hindi', 'Spanish', 'Japanese'];
 
 export default function Player({ id, episodeId }: { id: string; episodeId?: string }) {
-  const { back, navigate, setProgress, plan } = useApp();
-  const title = getTitle(id);
+  const { catalog, back, navigate, setProgress, plan } = useApp();
+  const title = catalog.find((t) => t.id === id);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hideTimer = useRef<number | undefined>(undefined);
@@ -193,15 +193,34 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
     v.playbackRate = speed;
   }, [volume, muted, speed]);
 
-  // Premium auto-pause guard on mount
+  // Subscription Tier Guard on mount
   useEffect(() => {
-    if (title?.isPremium && plan === 'free') {
+    if (!title) return;
+    
+    let isDenied = false;
+    
+    // Check traditional isPremium flag
+    if (title.isPremium && (!plan || plan === 'free')) {
+      isDenied = true;
+    }
+    
+    // Check specific requiredPlan tier if specified
+    if (title.requiredPlan && title.requiredPlan !== 'free') {
+      const userPrice = plan === 'free' || !plan ? 0 : (PLANS.find(p => p.id === plan)?.price || 0);
+      const requiredPrice = PLANS.find(p => p.id === title.requiredPlan)?.price || Infinity;
+      
+      if (userPrice < requiredPrice) {
+        isDenied = true;
+      }
+    }
+
+    if (isDenied) {
       setShowUpgradeModal(true);
       setUpgradeReason('premium');
       const v = videoRef.current;
       if (v) v.pause();
     }
-  }, [title?.isPremium, plan]);
+  }, [title, plan]);
 
   const fmt = (s: number) => {
     if (!isFinite(s)) return '0:00';
@@ -230,7 +249,7 @@ export default function Player({ id, episodeId }: { id: string; episodeId?: stri
       <video
         ref={videoRef}
         src={videoSrc}
-        autoPlay={!(title?.isPremium && plan === 'free')}
+        autoPlay={true}
         playsInline
         className="absolute inset-0 w-full h-full object-contain"
         onClick={togglePlay}
