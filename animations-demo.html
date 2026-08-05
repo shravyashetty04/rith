@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Concepts Demo</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fbf7f1;
+            margin: 0;
+            padding: 50px;
+            color: #333;
+        }
+        h1 { text-align: center; margin-bottom: 50px; color: #2c5e3b; }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .demo-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .demo-card h3 { color: #fca311; margin-bottom: 10px; }
+        .demo-card p { font-size: 0.9rem; color: #666; margin-bottom: 30px; }
+        
+        .animation-container {
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        /* 1. Floating Stack */
+        .stack-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            animation: float 4s ease-in-out infinite;
+        }
+        .stack-img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
+        }
+        .stack-img-back {
+            transform: scale(0.9) translate(15px, 15px);
+            opacity: 0.6;
+        }
+        .stack-container:hover .stack-img-back {
+            transform: scale(0.95) translate(30px, 30px);
+            opacity: 0.8;
+            transform: rotate(5deg) translate(30px, 10px);
+        }
+        .stack-container:hover .stack-img {
+            transform: rotate(-3deg);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* 2. 3D Tilt (Simple CSS version) */
+        .tilt-card {
+            width: 220px;
+            height: 180px;
+            border-radius: 12px;
+            background: url('assets/images/products/Front.jpg') center/cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .tilt-card:hover {
+            transform: rotateY(15deg) rotateX(10deg) scale(1.05);
+            box-shadow: -15px 15px 30px rgba(0,0,0,0.2);
+        }
+
+        /* 3. Flip Card */
+        .flip-inner {
+            width: 220px;
+            height: 180px;
+            position: relative;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .animation-container:hover .flip-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .flip-front {
+            background: url('assets/images/products/Front.jpg') center/cover;
+        }
+        .flip-back {
+            background: #2c5e3b;
+            color: white;
+            transform: rotateY(180deg);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* 4. Ken Burns Frame */
+        .kb-frame {
+            width: 220px;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            border: 5px solid white;
+        }
+        .kb-img {
+            width: 100%; height: 100%;
+            background: url('assets/images/products/Front.jpg') center/cover;
+            transition: transform 3s ease;
+        }
+        .kb-frame:hover .kb-img {
+            transform: scale(1.2) rotate(2deg);
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Animation Demos</h1>
+    
+    <div class="demo-grid">
+        <!-- Option 1 -->
+        <div class="demo-card">
+            <h3>1. Floating Stack</h3>
+            <p>Continuously floats up & down. Hover to spread the images apart.</p>
+            <div class="animation-container">
+                <div class="stack-container">
+                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800" class="stack-img stack-img-back" alt="">
+                    <img src="assets/images/products/Front.jpg" class="stack-img" alt="">
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 2 -->
+        <div class="demo-card">
+            <h3>2. 3D Tilt Card</h3>
+            <p>Hover your mouse to see the image tilt into a 3D perspective.</p>
+            <div class="animation-container">
+                <div class="tilt-card"></div>
+            </div>
+        </div>
+
+        <!-- Option 3 -->
+        <div class="demo-card">
+            <h3>3. Recipe Flip Card</h3>
+            <p>Hover your mouse to flip the card over and read a message.</p>
+            <div class="animation-container">
+                <div class="flip-inner">
+                    <div class="flip-front"></div>
+                    <div class="flip-back">100% Sun-dried & Hand-pounded with Love</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 4 -->
+        <div class="demo-card">
+            <h3>4. Living Frame (Ken Burns)</h3>
+            <p>Hover to slowly zoom in and bring the still image to life.</p>
+            <div class="animation-container">
+                <div class="kb-frame">
+                    <div class="kb-img"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
